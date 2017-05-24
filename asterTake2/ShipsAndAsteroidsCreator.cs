@@ -29,10 +29,13 @@ namespace asterTake2
                     new PointF(0, 50)
                 }
             };
-            var ship = new ComplexShape();
+            var ship = new ComplexShape
+            {
+                RotationCenter = new PointF(25, 25),
+                Angle = Math.PI * 3.0/4.0
+            };
             ship.Shapes.Add(triangle);
             ship.Shapes.Add(square);
-            ship.RotationCenter = new PointF(25, 25);
             return ship;
         }
 
@@ -68,7 +71,7 @@ namespace asterTake2
         public static List<ComplexShape> CreateAsteroids()
         {
             var asteroids = new List<ComplexShape>();
-            for (var i = 0; i < 10; i++)
+            for (var i = 0; i < 50; i++)
             {
                 var asteroid = CreateAsteroid();
                 asteroids.Add(asteroid);
