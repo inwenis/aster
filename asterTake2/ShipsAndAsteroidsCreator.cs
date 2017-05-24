@@ -75,5 +75,12 @@ namespace asterTake2
             }
             return asteroids;
         }
+
+        public static Bullet CreateBullet(ComplexShape ship)
+        {
+            var position = ship.Position;
+            var angle = ship.Angle;
+            return new Bullet(position, angle);
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -20,11 +21,13 @@ namespace asterTake2
 
         private readonly ComplexShape _ship;
         private readonly List<ComplexShape> _asteroids;
+        private readonly List<Bullet> _bullets;
 
         private bool _isUpKeyPressed;
         private bool _isRightKeyPressed;
         private bool _isDownKeyPressed;
         private bool _isLeftKeyPressed;
+        private bool _isShooting;
 
         public Game()
         {
@@ -51,6 +54,7 @@ namespace asterTake2
 
             _ship = ShipsAndAsteroidsCreator.CreateShip();
             _asteroids = ShipsAndAsteroidsCreator.CreateAsteroids();
+            _bullets = new List<Bullet>();
         }
 
         public void Start()
@@ -79,6 +83,10 @@ namespace asterTake2
             {
                 _isRightKeyPressed = false;
             }
+            if (args.KeyCode == Keys.Space)
+            {
+                _isShooting = false;
+            }
         }
 
         private void GameWindowOnKeyDown(object sender, KeyEventArgs args)
@@ -99,6 +107,10 @@ namespace asterTake2
             {
                 _isRightKeyPressed = true;
             }
+            if (args.KeyCode == Keys.Space)
+            {
+                _isShooting = true;
+            }
             if (args.KeyCode == Keys.Escape)
             {
                 _window.Close();
@@ -114,9 +126,13 @@ namespace asterTake2
         {
             var graphics = eventArgs.Graphics;
             _ship.DrawShape(graphics);
-            foreach (var complexShape in _asteroids)
+            foreach (var bullet in _bullets)
             {
-                complexShape.DrawShape(graphics);
+                bullet.Draw(graphics);
+            }
+            foreach (var asteroid in _asteroids)
+            {
+                asteroid.DrawShape(graphics);
             }
         }
 
@@ -158,6 +174,16 @@ namespace asterTake2
             if (_isLeftKeyPressed)
             {
                 _ship.Rotate(-Math.PI / 180);
+            }
+            if (_isShooting)
+            {
+                var bullet = ShipsAndAsteroidsCreator.CreateBullet(_ship);
+                _bullets.Add(bullet);
+            }
+
+            foreach (var bullet in _bullets)
+            {
+                bullet.Move();
             }
 
             foreach (var complexShape in _asteroids)
