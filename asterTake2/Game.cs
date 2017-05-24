@@ -62,6 +62,8 @@ namespace asterTake2
             _stopwatch.Start();
             _gameStateUpdatingThread.Start();
             _isRunning = true;
+            _window.Show();
+            _window.Activate();
             Application.Run(_window);
         }
 
