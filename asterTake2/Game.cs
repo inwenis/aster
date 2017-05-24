@@ -34,7 +34,7 @@ namespace asterTake2
             _window = new Form
             {
                 FormBorderStyle = FormBorderStyle.Fixed3D, //what does this mean?
-                ClientSize = new Size(600, 800),
+                ClientSize = new Size(1000, 600),
                 MaximizeBox = false,
                 StartPosition = FormStartPosition.CenterScreen,
                 KeyPreview = false
@@ -186,10 +186,18 @@ namespace asterTake2
                 bullet.Move();
             }
 
-            foreach (var complexShape in _asteroids)
+            foreach (var asteroid in _asteroids)
             {
-                var movementA = new PointF(0, -1).Rotate(complexShape.Angle, new PointF(0, 0));
-                complexShape.Position = complexShape.Position.Offset(movementA);
+                var movementA = new PointF(0, -1).Rotate(asteroid.Angle, new PointF(0, 0));
+                if (asteroid.Position.X > 1050)
+                {
+                    asteroid.Position.X = -50;
+                }
+                if (asteroid.Position.Y > 650)
+                {
+                    asteroid.Position.Y = -50;
+                }
+                asteroid.Position = asteroid.Position.Offset(movementA);
             }
 
             var asteroidsToBeRemoved = new List<ComplexShape>();
