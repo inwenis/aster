@@ -99,6 +99,10 @@ namespace asterTake2
             {
                 _isRightKeyPressed = true;
             }
+            if (args.KeyCode == Keys.Escape)
+            {
+                _window.Close();
+            }
         }
 
         private void GameWindowOnClosed(object sender, EventArgs eventArgs)
@@ -137,7 +141,6 @@ namespace asterTake2
 
         private void GameUpdate()
         {
-            
             if (_isUpKeyPressed)
             {
                 var movement = new PointF(0, -1).Rotate(_ship.Angle, new PointF(0, 0));
