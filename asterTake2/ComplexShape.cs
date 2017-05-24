@@ -9,6 +9,8 @@ namespace asterTake2
         public PointF Position = new PointF(0, 0);
         public PointF RotationCenter = new PointF(0, 0);
         public double Angle;
+        private long _lastShoot;
+        private readonly long _shootingInterval = 500;
 
         public void Rotate(double angle)
         {
@@ -30,6 +32,19 @@ namespace asterTake2
         {
             Position.X += offset.X;
             Position.Y += offset.Y;
+        }
+
+        public bool CanShoot(long elapsedMilliseconds)
+        {
+            if (elapsedMilliseconds - _lastShoot >= _shootingInterval)
+            {
+                _lastShoot = elapsedMilliseconds;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

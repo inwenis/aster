@@ -175,7 +175,7 @@ namespace asterTake2
             {
                 _ship.Rotate(-Math.PI / 180);
             }
-            if (_isShooting)
+            if (_isShooting && _ship.CanShoot(_stopwatch.ElapsedMilliseconds))
             {
                 var bullet = ShipsAndAsteroidsCreator.CreateBullet(_ship);
                 _bullets.Add(bullet);
