@@ -4,26 +4,26 @@ namespace asterTake2
 {
     internal class Bullet
     {
-        private PointF _position;
+        public PointF Position;
         private readonly double _angle;
 
         public Bullet(PointF position, double angle)
         {
-            _position = position;
+            Position = position;
             _angle = angle;
         }
 
         public void Move()
         {
             var movement = new PointF(0, -1).Rotate(_angle, new PointF(0, 0));
-            _position = _position.Offset(movement);
+            Position = Position.Offset(movement);
         }
 
         public void Draw(Graphics graphics)
         {
             var drawFont = new Font("Arial", 16);
             var drawBrush = new SolidBrush(Color.Aquamarine);
-            graphics.DrawString("o", drawFont, drawBrush, _position);
+            graphics.DrawString("o", drawFont, drawBrush, Position);
         }
     }
 }

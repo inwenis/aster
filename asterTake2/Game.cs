@@ -191,6 +191,35 @@ namespace asterTake2
                 var movementA = new PointF(0, -1).Rotate(complexShape.Angle, new PointF(0, 0));
                 complexShape.Position = complexShape.Position.Offset(movementA);
             }
+
+            var asteroidsToBeRemoved = new List<ComplexShape>();
+            var bulletsToBeremoved = new List<Bullet>();
+            foreach (var asteroid in _asteroids)
+            {
+                foreach (var bullet in _bullets)
+                {
+                    var distanceX = asteroid.Position.X - bullet.Position.X;
+                    var distanceY = asteroid.Position.Y - bullet.Position.Y;
+
+                    var dist = distanceX * distanceX + distanceY * distanceY;
+                    dist = (float)Math.Sqrt(dist);
+                    if (dist < 20)
+                    {
+                        asteroidsToBeRemoved.Add(asteroid);
+                        bulletsToBeremoved.Add(bullet);
+                        break;
+                    }
+                }
+            }
+
+            foreach (var asteroid in asteroidsToBeRemoved)
+            {
+                _asteroids.Remove(asteroid);
+            }
+            foreach (var bullet in bulletsToBeremoved)
+            {
+                _bullets.Remove(bullet);
+            }
         }
     }
 }
