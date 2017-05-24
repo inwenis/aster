@@ -23,6 +23,8 @@ namespace asterTake2
 
         private bool _isUpKeyPressed;
         private bool _isRightKeyPressed;
+        private bool _isDownKeyPressed;
+        private bool _isLeftKeyPressed;
 
         public Game()
         {
@@ -65,6 +67,14 @@ namespace asterTake2
             {
                 _isUpKeyPressed = false;
             }
+            if (args.KeyCode == Keys.S)
+            {
+                _isDownKeyPressed = false;
+            }
+            if (args.KeyCode == Keys.A)
+            {
+                _isLeftKeyPressed = false;
+            }
             if (args.KeyCode == Keys.D)
             {
                 _isRightKeyPressed = false;
@@ -76,6 +86,14 @@ namespace asterTake2
             if (args.KeyCode == Keys.W)
             {
                 _isUpKeyPressed = true;
+            }
+            if (args.KeyCode == Keys.S)
+            {
+                _isDownKeyPressed = true;
+            }
+            if (args.KeyCode == Keys.A)
+            {
+                _isLeftKeyPressed = true;
             }
             if (args.KeyCode == Keys.D)
             {
@@ -119,14 +137,24 @@ namespace asterTake2
 
         private void GameUpdate()
         {
-            var movement = new PointF(0, -1).Rotate(_ship.Angle, new PointF(0, 0));
+            
             if (_isUpKeyPressed)
             {
+                var movement = new PointF(0, -1).Rotate(_ship.Angle, new PointF(0, 0));
+                _ship.Position = _ship.Position.Offset(movement);
+            }
+            if (_isDownKeyPressed)
+            {
+                var movement = new PointF(0, 1).Rotate(_ship.Angle, new PointF(0, 0));
                 _ship.Position = _ship.Position.Offset(movement);
             }
             if (_isRightKeyPressed)
             {
                 _ship.Rotate(Math.PI / 180);
+            }
+            if (_isLeftKeyPressed)
+            {
+                _ship.Rotate(-Math.PI / 180);
             }
 
             foreach (var complexShape in _asteroids)
