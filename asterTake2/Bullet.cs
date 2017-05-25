@@ -6,11 +6,13 @@ namespace asterTake2
     {
         public PointF Position;
         private readonly double _angle;
+        public bool Alive;
 
         public Bullet(PointF position, double angle)
         {
             Position = position;
             _angle = angle;
+            Alive = true;
         }
 
         public void Move()
@@ -24,6 +26,11 @@ namespace asterTake2
             var drawFont = new Font("Arial", 16);
             var drawBrush = new SolidBrush(Color.Aquamarine);
             graphics.DrawString("o", drawFont, drawBrush, Position);
+        }
+
+        public void MarkDead()
+        {
+            Alive = false;
         }
     }
 }

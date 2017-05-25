@@ -39,9 +39,9 @@ namespace asterTake2
             return ship;
         }
 
-        public static ComplexShape CreateAsteroid()
+        public static Asteroid CreateAsteroid()
         {
-            var asteroid = new ComplexShape
+            var asteroid = new Asteroid()
             {
                 Position = new PointF(Random.Next(500), Random.Next(500))
             };
@@ -68,9 +68,9 @@ namespace asterTake2
             return asteroid;
         }
 
-        public static List<ComplexShape> CreateAsteroids()
+        public static List<Asteroid> CreateAsteroids()
         {
-            var asteroids = new List<ComplexShape>();
+            var asteroids = new List<Asteroid>();
             for (var i = 0; i < 50; i++)
             {
                 var asteroid = CreateAsteroid();

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -20,7 +21,7 @@ namespace asterTake2
         private readonly Stopwatch _stopwatch;
 
         private readonly ComplexShape _ship;
-        private readonly List<ComplexShape> _asteroids;
+        private readonly List<Asteroid> _asteroids;
         private readonly List<Bullet> _bullets;
 
         private bool _isUpKeyPressed;
@@ -128,11 +129,15 @@ namespace asterTake2
         {
             var graphics = eventArgs.Graphics;
             _ship.DrawShape(graphics);
-            foreach (var bullet in _bullets)
+            for (int index = 0; index < _bullets.Count; index++)
             {
-                bullet.Draw(graphics);
+                var bullet = _bullets[index];
+                if (bullet.Alive)
+                {
+                    bullet.Draw(graphics);
+                }
             }
-            foreach (var asteroid in _asteroids)
+            foreach (var asteroid in _asteroids.Where(a => a.Alive))
             {
                 asteroid.DrawShape(graphics);
             }
@@ -183,12 +188,14 @@ namespace asterTake2
                 _bullets.Add(bullet);
             }
 
-            foreach (var bullet in _bullets)
+            var aliveBullets = _bullets.Where(b => b.Alive).ToArray();
+            var aliveAsteroid = _asteroids.Where(a => a.Alive).ToArray();
+            foreach (var bullet in aliveBullets)
             {
                 bullet.Move();
             }
 
-            foreach (var asteroid in _asteroids)
+            foreach (var asteroid in aliveAsteroid)
             {
                 var movementA = new PointF(0, -1).Rotate(asteroid.Angle, new PointF(0, 0));
                 if (asteroid.Position.X > 1050)
@@ -202,11 +209,9 @@ namespace asterTake2
                 asteroid.Position = asteroid.Position.Offset(movementA);
             }
 
-            var asteroidsToBeRemoved = new List<ComplexShape>();
-            var bulletsToBeremoved = new List<Bullet>();
-            foreach (var asteroid in _asteroids)
+            foreach (var asteroid in aliveAsteroid)
             {
-                foreach (var bullet in _bullets)
+                foreach (var bullet in aliveBullets)
                 {
                     var distanceX = asteroid.Position.X - bullet.Position.X;
                     var distanceY = asteroid.Position.Y - bullet.Position.Y;
@@ -215,20 +220,11 @@ namespace asterTake2
                     dist = (float)Math.Sqrt(dist);
                     if (dist < 20)
                     {
-                        asteroidsToBeRemoved.Add(asteroid);
-                        bulletsToBeremoved.Add(bullet);
+                        asteroid.MarkDead();
+                        bullet.MarkDead();
                         break;
                     }
                 }
-            }
-
-            foreach (var asteroid in asteroidsToBeRemoved)
-            {
-                _asteroids.Remove(asteroid);
-            }
-            foreach (var bullet in bulletsToBeremoved)
-            {
-                _bullets.Remove(bullet);
             }
         }
     }
