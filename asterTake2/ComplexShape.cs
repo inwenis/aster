@@ -10,7 +10,7 @@ namespace asterTake2
         public PointF RotationCenter = new PointF(0, 0);
         public double Angle;
         private long _lastShoot;
-        private readonly long _shootingInterval = 50;
+        private readonly long _shootingInterval = 250;
 
         public void Rotate(double angle)
         {

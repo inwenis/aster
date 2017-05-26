@@ -39,9 +39,7 @@ namespace asterTake2
 
         public void Draw(Graphics graphics)
         {
-            var drawFont = new Font("Arial", 16);
-            var drawBrush = new SolidBrush(Color.Aquamarine);
-            graphics.DrawString("o", drawFont, drawBrush, Position);
+            graphics.FillRectangle(Brushes.White, Position.X, Position.Y, 2, 2);
         }
 
         public void MarkDead()
