@@ -19,6 +19,22 @@ namespace asterTake2
         {
             var movement = new PointF(0, -6).Rotate(_angle, new PointF(0, 0));
             Position = Position.Offset(movement);
+            if (Position.X > 1050)
+            {
+                Alive = false;
+            }
+            if (Position.Y > 650)
+            {
+                Alive = false;
+            }
+            if (Position.X < -50)
+            {
+                Alive = false;
+            }
+            if (Position.Y < -50)
+            {
+                Alive = false;
+            }
         }
 
         public void Draw(Graphics graphics)

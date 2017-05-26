@@ -33,6 +33,7 @@ namespace asterTake2
         private long _respawnTime = 3000;
         private InputHandler _inputReader;
         private readonly Collider _collider;
+        private int _level;
 
         public Game()
         {
@@ -57,9 +58,10 @@ namespace asterTake2
             _stopwatch = new Stopwatch();
 
             _ship = ShipsAndAsteroidsCreator.CreateShip();
-            _asteroids = ShipsAndAsteroidsCreator.CreateAsteroids();
+            _asteroids = ShipsAndAsteroidsCreator.CreateAsteroids(50);
             _bullets = new List<Bullet>();
             _collider = new Collider();
+            _level = 1;
         }
 
         private void _canvas_Paint(object sender, PaintEventArgs e)
@@ -68,9 +70,19 @@ namespace asterTake2
 
             var drawFont = new Font("Arial", 16);
             var drawBrush = new SolidBrush(Color.Aquamarine);
-            var message = "Lives: " + Enumerable.Repeat(" | ", _ship.Lives).Aggregate((a,n) => a + n);
+            string message;
+            if (_ship.Lives > 0)
+            {
+                message = "Lives: " + Enumerable.Repeat(" | ", _ship.Lives).Aggregate((a,n) => a + n);
+            }
+            else
+            {
+                message = "Lives: 0";
+            }
             graphics.DrawString(message, drawFont, drawBrush, 10, 10);
             graphics.DrawString("Asteroids: " + _asteroids.Count, drawFont, drawBrush, 10, 40);
+            graphics.DrawString("Level: " + _level, drawFont, drawBrush, 10, 70);
+            graphics.DrawString("Bullets: " + _bullets.Count, drawFont, drawBrush, 10, 100);
 
             _ship.DrawShape(graphics);
             for (int index = 0; index < _bullets.Count; index++)
@@ -159,6 +171,9 @@ namespace asterTake2
             else
             {
                 Console.WriteLine("Respawning... " + _ship.Lives);
+
+                _ship.Hide = ((_stopwatch.ElapsedMilliseconds - _ship.RespawnStartTime)/150)%2 == 0;
+
                 if (_stopwatch.ElapsedMilliseconds - _ship.RespawnStartTime >= _respawnTime)
                 {
                     _ship.IsRespawning = false;
@@ -167,6 +182,13 @@ namespace asterTake2
             }
 
             Collider.HandleAsteroidBulletCollisions(_asteroids, _bullets);
+
+            if (_asteroids.Count == 0)
+            {
+                _level += 1;
+                int count = (int) (50 * Math.Pow(2, _level - 1));
+                _asteroids = ShipsAndAsteroidsCreator.CreateAsteroids(count);
+            }
         }
     }
 }

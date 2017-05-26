@@ -17,7 +17,7 @@ namespace asterTake2
             Angle += angle;
         }
 
-        public void DrawShape(Graphics graphics)
+        public virtual void DrawShape(Graphics graphics)
         {
             foreach (var shape in Shapes)
             {

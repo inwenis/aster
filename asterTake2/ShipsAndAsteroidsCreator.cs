@@ -74,10 +74,10 @@ namespace asterTake2
             return asteroid;
         }
 
-        public static List<Asteroid> CreateAsteroids()
+        public static List<Asteroid> CreateAsteroids(int count = 50)
         {
             var asteroids = new List<Asteroid>();
-            for (var i = 0; i < 50; i++)
+            for (var i = 0; i < count; i++)
             {
                 var asteroid = CreateAsteroid();
                 asteroids.Add(asteroid);
