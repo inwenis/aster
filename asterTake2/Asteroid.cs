@@ -11,6 +11,8 @@ namespace asterTake2
             Alive = true;
         }
 
+        public int Generation;
+
         public void MarkDead()
         {
             Alive = false;

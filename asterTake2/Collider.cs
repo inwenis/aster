@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace asterTake2
 {
@@ -47,6 +48,11 @@ namespace asterTake2
                         break;
                     }
                 }
+            }
+            foreach (var destroyedAsteroid in asteroids.Where(a => !a.Alive && a.Generation == 1).ToList())
+            {
+                var newAsteroids = ShipsAndAsteroidsCreator.CreateSmallerAsteroids(destroyedAsteroid);
+                asteroids.AddRange(newAsteroids);
             }
         }
     }

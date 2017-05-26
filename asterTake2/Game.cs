@@ -74,12 +74,19 @@ namespace asterTake2
             if (_ship.Lives > 0)
             {
                 message = "Lives: " + Enumerable.Repeat(" | ", _ship.Lives).Aggregate((a,n) => a + n);
+                graphics.DrawString(message, drawFont, drawBrush, 10, 10);
+            }
+            else if(_ship.Lives == 0)
+            {
+                message = "Lives: 0";
+                graphics.DrawString(message, drawFont, drawBrush, 10, 10);
             }
             else
             {
-                message = "Lives: 0";
+                message = "Lives: Game Over!";
+                graphics.DrawString(message, drawFont, new SolidBrush(Color.Red), 10, 10);
             }
-            graphics.DrawString(message, drawFont, drawBrush, 10, 10);
+            
             graphics.DrawString("Asteroids: " + _asteroids.Count, drawFont, drawBrush, 10, 40);
             graphics.DrawString("Level: " + _level, drawFont, drawBrush, 10, 70);
             graphics.DrawString("Bullets: " + _bullets.Count, drawFont, drawBrush, 10, 100);

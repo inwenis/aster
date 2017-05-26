@@ -71,6 +71,7 @@ namespace asterTake2
             asteroid.Shapes.Add(asteroidShape);
             asteroid.Angle = (Math.PI / 180) * Random.Next(360);
             asteroid.RotationCenter = new PointF(20, 20);
+            asteroid.Generation = 1;
             return asteroid;
         }
 
@@ -90,6 +91,46 @@ namespace asterTake2
             var position = ship.Position;
             var angle = ship.Angle;
             return new Bullet(position, angle);
+        }
+
+        public static List<Asteroid> CreateSmallerAsteroids(Asteroid destroyedAsteroid)
+        {
+            var asteroidShape = new Shape
+            {
+                Points = new List<PointF>
+                {
+                    new PointF(0, 5),
+                    new PointF(5, 10),
+                    new PointF(0, 15),
+                    new PointF(5, 15),
+                    new PointF(15, 20),
+                    new PointF(20, 10),
+                    new PointF(15, 5),
+                    new PointF(10, 5),
+                    new PointF(5, 0),
+                    new PointF(5, 5),
+                    new PointF(0, 5),
+                }
+            };
+
+            var asteroid1 = new Asteroid()
+            {
+                Position = destroyedAsteroid.Position
+            };
+            var asteroid2 = new Asteroid()
+            {
+                Position = destroyedAsteroid.Position
+            };
+            asteroid1.Shapes.Add(asteroidShape);
+            asteroid1.Angle = destroyedAsteroid.Angle + Math.PI / 2;
+            asteroid1.RotationCenter = new PointF(20, 20);
+            asteroid1.Generation = 0;
+            asteroid2.Shapes.Add(asteroidShape);
+            asteroid2.Angle = destroyedAsteroid.Angle - Math.PI / 2;
+            asteroid2.RotationCenter = new PointF(20, 20);
+            asteroid1.Generation = 0;
+
+            return new List<Asteroid>{ asteroid1, asteroid2 };
         }
     }
 }
