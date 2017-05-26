@@ -17,7 +17,7 @@ namespace asterTake2
 
         public void Move()
         {
-            var movement = new PointF(0, -4).Rotate(_angle, new PointF(0, 0));
+            var movement = new PointF(0, -6).Rotate(_angle, new PointF(0, 0));
             Position = Position.Offset(movement);
         }
 

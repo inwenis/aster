@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+using System.Windows.Input;
 
 namespace asterTake2
 {
@@ -20,18 +20,25 @@ namespace asterTake2
         private bool _isRunning;
         private readonly Stopwatch _stopwatch;
 
-        private readonly ComplexShape _ship;
-        private readonly List<Asteroid> _asteroids;
-        private readonly List<Bullet> _bullets;
+        private readonly Ship _ship;
+        private List<Asteroid> _asteroids;
+        private List<Bullet> _bullets;
 
         private bool _isUpKeyPressed;
         private bool _isRightKeyPressed;
         private bool _isDownKeyPressed;
         private bool _isLeftKeyPressed;
         private bool _isShooting;
+        private long _respawnStartTime;
+        private long _respawnTime = 3000;
+        private InputHandler _inputReader;
+        private readonly Collider _collider;
 
         public Game()
         {
+            _inputReader = new InputHandler();
+            _collider = new Collider();
+
             _window = new Form
             {
                 FormBorderStyle = FormBorderStyle.Fixed3D, //what does this mean?
@@ -44,90 +51,27 @@ namespace asterTake2
             _canvas = new Canvas();
             _window.Controls.Add(_canvas);
 
-            _window.KeyDown += GameWindowOnKeyDown;
-            _window.KeyUp += WindowOnKeyUp;
             _window.Closed += GameWindowOnClosed;
-
-            _canvas.Paint += GameDraw;
+            _canvas.Paint += _canvas_Paint;
 
             _stopwatch = new Stopwatch();
-            _gameStateUpdatingThread = new Thread(MainLoop);
 
             _ship = ShipsAndAsteroidsCreator.CreateShip();
             _asteroids = ShipsAndAsteroidsCreator.CreateAsteroids();
             _bullets = new List<Bullet>();
+            _collider = new Collider();
         }
 
-        public void Start()
+        private void _canvas_Paint(object sender, PaintEventArgs e)
         {
-            _stopwatch.Start();
-            _gameStateUpdatingThread.Start();
-            _isRunning = true;
-            _window.Show();
-            _window.Activate();
-            Application.Run(_window);
-        }
+            var graphics = e.Graphics;
 
-        private void WindowOnKeyUp(object sender, KeyEventArgs args)
-        {
-            if (args.KeyCode == Keys.W)
-            {
-                _isUpKeyPressed = false;
-            }
-            if (args.KeyCode == Keys.S)
-            {
-                _isDownKeyPressed = false;
-            }
-            if (args.KeyCode == Keys.A)
-            {
-                _isLeftKeyPressed = false;
-            }
-            if (args.KeyCode == Keys.D)
-            {
-                _isRightKeyPressed = false;
-            }
-            if (args.KeyCode == Keys.Space)
-            {
-                _isShooting = false;
-            }
-        }
+            var drawFont = new Font("Arial", 16);
+            var drawBrush = new SolidBrush(Color.Aquamarine);
+            var message = "Lives: " + Enumerable.Repeat(" | ", _ship.Lives).Aggregate((a,n) => a + n);
+            graphics.DrawString(message, drawFont, drawBrush, 10, 10);
+            graphics.DrawString("Asteroids: " + _asteroids.Count, drawFont, drawBrush, 10, 40);
 
-        private void GameWindowOnKeyDown(object sender, KeyEventArgs args)
-        {
-            if (args.KeyCode == Keys.W)
-            {
-                _isUpKeyPressed = true;
-            }
-            if (args.KeyCode == Keys.S)
-            {
-                _isDownKeyPressed = true;
-            }
-            if (args.KeyCode == Keys.A)
-            {
-                _isLeftKeyPressed = true;
-            }
-            if (args.KeyCode == Keys.D)
-            {
-                _isRightKeyPressed = true;
-            }
-            if (args.KeyCode == Keys.Space)
-            {
-                _isShooting = true;
-            }
-            if (args.KeyCode == Keys.Escape)
-            {
-                _window.Close();
-            }
-        }
-
-        private void GameWindowOnClosed(object sender, EventArgs eventArgs)
-        {
-            _isRunning = false;
-        }
-
-        private void GameDraw(object sender, PaintEventArgs eventArgs)
-        {
-            var graphics = eventArgs.Graphics;
             _ship.DrawShape(graphics);
             for (int index = 0; index < _bullets.Count; index++)
             {
@@ -143,89 +87,86 @@ namespace asterTake2
             }
         }
 
-        private void MainLoop()
+        public void Start()
         {
+            _stopwatch.Start();
+            _isRunning = true;
+            _window.Show();
+            _window.Activate();
             while (_isRunning)
             {
-                var frameStartTime = _stopwatch.ElapsedMilliseconds;
-                GameUpdate();
+                var start = _stopwatch.ElapsedMilliseconds;
+                Application.DoEvents();
+
+                var input = _inputReader.InputReader();
+                if (input.UserRequestedToExit)
+                {
+                    _isRunning = false;
+                }
+                GameUpdate(input);
+                
                 _canvas.Invalidate();
 
-                if (_stopwatch.ElapsedMilliseconds - frameStartTime <= _interval)
+                var end = _stopwatch.ElapsedMilliseconds;
+                if (end - start < _interval)
                 {
-                    while ((_stopwatch.ElapsedMilliseconds - frameStartTime) < _interval) { }
+                    Thread.Sleep((int)(_interval - (_stopwatch.ElapsedMilliseconds - start)));
                 }
                 else
                 {
-                    Console.WriteLine("Warning: Game is running slowly");
+                    Console.WriteLine("Game is running slowly");
                 }
             }
         }
 
-        private void GameUpdate()
+        private void GameWindowOnClosed(object sender, EventArgs eventArgs)
         {
-            if (_isUpKeyPressed)
+            _isRunning = false;
+        }
+
+        private void GameUpdate(UserInput input)
+        {
+            if(input.UserRequestedDebug)
             {
-                var movement = new PointF(0, -1).Rotate(_ship.Angle, new PointF(0, 0));
-                _ship.Position = _ship.Position.Offset(movement);
-            }
-            if (_isDownKeyPressed)
-            {
-                var movement = new PointF(0, 1).Rotate(_ship.Angle, new PointF(0, 0));
-                _ship.Position = _ship.Position.Offset(movement);
-            }
-            if (_isRightKeyPressed)
-            {
-                _ship.Rotate(Math.PI / 180);
-            }
-            if (_isLeftKeyPressed)
-            {
-                _ship.Rotate(-Math.PI / 180);
-            }
-            if (_isShooting && _ship.CanShoot(_stopwatch.ElapsedMilliseconds))
-            {
-                var bullet = ShipsAndAsteroidsCreator.CreateBullet(_ship);
-                _bullets.Add(bullet);
+                foreach (var asteroid in _asteroids)
+                {
+                    Console.WriteLine(asteroid.Position);
+                }
             }
 
-            var aliveBullets = _bullets.Where(b => b.Alive).ToArray();
-            var aliveAsteroid = _asteroids.Where(a => a.Alive).ToArray();
-            foreach (var bullet in aliveBullets)
+            if (_ship.IsAlive)
+            {
+                ShipMoverAndShooter.Move(_ship, input);
+                ShipMoverAndShooter.HandleShooting(_ship, input, _bullets, _stopwatch.ElapsedMilliseconds);
+            }
+
+            _bullets = _bullets.Where(b => b.Alive).ToList();
+            _asteroids = _asteroids.Where(a => a.Alive).ToList();
+
+            foreach (var bullet in _bullets)
             {
                 bullet.Move();
             }
-
-            foreach (var asteroid in aliveAsteroid)
+            foreach (var asteroid in _asteroids)
             {
-                var movementA = new PointF(0, -1).Rotate(asteroid.Angle, new PointF(0, 0));
-                if (asteroid.Position.X > 1050)
-                {
-                    asteroid.Position.X = -50;
-                }
-                if (asteroid.Position.Y > 650)
-                {
-                    asteroid.Position.Y = -50;
-                }
-                asteroid.Position = asteroid.Position.Offset(movementA);
+                asteroid.Move();
             }
 
-            foreach (var asteroid in aliveAsteroid)
+            if (!_ship.IsRespawning)
             {
-                foreach (var bullet in aliveBullets)
+                _collider.HandleShipAsteroidCollisions(_asteroids, _ship, _stopwatch.ElapsedMilliseconds);
+            }
+            else
+            {
+                Console.WriteLine("Respawning... " + _ship.Lives);
+                if (_stopwatch.ElapsedMilliseconds - _ship.RespawnStartTime >= _respawnTime)
                 {
-                    var distanceX = asteroid.Position.X - bullet.Position.X;
-                    var distanceY = asteroid.Position.Y - bullet.Position.Y;
-
-                    var dist = distanceX * distanceX + distanceY * distanceY;
-                    dist = (float)Math.Sqrt(dist);
-                    if (dist < 20)
-                    {
-                        asteroid.MarkDead();
-                        bullet.MarkDead();
-                        break;
-                    }
+                    _ship.IsRespawning = false;
+                    Console.WriteLine("Respawning ended...");
                 }
             }
+
+            Collider.HandleAsteroidBulletCollisions(_asteroids, _bullets);
         }
     }
 }

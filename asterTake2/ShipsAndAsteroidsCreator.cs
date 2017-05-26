@@ -8,7 +8,7 @@ namespace asterTake2
     {
         private static readonly Random Random = new Random(DateTime.Now.Millisecond);
 
-        public static ComplexShape CreateShip()
+        public static Ship CreateShip()
         {
             var triangle = new Shape
             {
@@ -29,10 +29,11 @@ namespace asterTake2
                     new PointF(0, 50)
                 }
             };
-            var ship = new ComplexShape
+            var ship = new Ship
             {
                 RotationCenter = new PointF(25, 25),
-                Angle = Math.PI * 3.0/4.0
+                Angle = Math.PI * 3.0/4.0,
+                Position = new PointF(500, 300)
             };
             ship.Shapes.Add(triangle);
             ship.Shapes.Add(square);
@@ -41,9 +42,14 @@ namespace asterTake2
 
         public static Asteroid CreateAsteroid()
         {
+            var x = Random.Next(1000);
+            if (x > 300)
+            {
+                x += 400;
+            }
             var asteroid = new Asteroid()
             {
-                Position = new PointF(Random.Next(500), Random.Next(500))
+                Position = new PointF(x, Random.Next(600))
             };
             var asteroidShape = new Shape
             {
