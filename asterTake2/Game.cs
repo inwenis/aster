@@ -34,8 +34,6 @@ namespace asterTake2
         private InputHandler _inputReader;
         private readonly Collider _collider;
         private int _level;
-        private List<Bullet> _bulletsDead = new List<Bullet>();
-        private List<Asteroid> _asteroidsDead = new List<Asteroid>();
         private long ActualFPS;
         private readonly Mover _mover;
 
@@ -99,26 +97,13 @@ namespace asterTake2
             graphics.DrawString("FPS: " + ActualFPS, drawFont, drawBrush, 10, 130);
 
             _ship.DrawShape(graphics);
-            for (int index = 0; index < _bullets.Count; index++)
+            foreach (var bullet in _bullets.Where(b => b.Alive))
             {
-                var bullet = _bullets[index];
-                if (bullet.Alive)
-                {
-                    bullet.Draw(graphics);
-                }
+                bullet.Draw(graphics);
             }
             foreach (var asteroid in _asteroids.Where(a => a.Alive))
             {
                 asteroid.Draw(graphics);
-            }
-
-            foreach (var asteroid in _asteroidsDead)
-            {
-//                asteroid.Draw(graphics);
-            }
-            foreach (var bullet in _bulletsDead)
-            {
-//                bullet.Draw(graphics);
             }
         }
 
@@ -181,9 +166,8 @@ namespace asterTake2
                 ShipMoverAndShooter.Move(_ship, input);
                 ShipMoverAndShooter.HandleShooting(_ship, input, _bullets, _stopwatch.ElapsedMilliseconds);
             }
-            _bulletsDead.AddRange(_bullets.Where(b => !b.Alive).ToList());
-            _asteroidsDead.AddRange(_asteroids.Where(b => !b.Alive).ToList());
 
+            //TODO don't have to do this every frame
             _bullets = _bullets.Where(b => b.Alive).ToList();
             _asteroids = _asteroids.Where(a => a.Alive).ToList();
 
