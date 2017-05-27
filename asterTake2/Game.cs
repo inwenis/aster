@@ -190,7 +190,7 @@ namespace asterTake2
             }
             foreach (var asteroid in _asteroids)
             {
-                asteroid.Move();
+                Mover.Move(asteroid);
             }
 
             if (!_ship.IsRespawning)
