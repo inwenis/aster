@@ -17,17 +17,6 @@ namespace asterTake2
             Angle += angle;
         }
 
-        public virtual void DrawShape(Graphics graphics)
-        {
-            foreach (var shape in Shapes)
-            {
-                shape
-                    .Rotate(Angle, RotationCenter)
-                    .Offset(Position)
-                    .Draw(graphics);
-            }
-        }
-
         public void OffsetBy(PointF offset)
         {
             Position.X += offset.X;

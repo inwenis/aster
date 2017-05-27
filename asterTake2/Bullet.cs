@@ -7,6 +7,7 @@ namespace asterTake2
         public PointF Position;
         private readonly double _angle;
         public bool Alive;
+        public int Radius;
 
         public Bullet(PointF position, double angle)
         {
@@ -39,7 +40,8 @@ namespace asterTake2
 
         public void Draw(Graphics graphics)
         {
-            graphics.FillRectangle(Brushes.White, Position.X, Position.Y, 2, 2);
+            graphics.FillRectangle(Brushes.White, Position.X, Position.Y, 1, 1);
+            graphics.DrawEllipse(Pens.Red, Position.X - Radius, Position.Y - Radius, Radius * 2, Radius * 2);
         }
 
         public void MarkDead()

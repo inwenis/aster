@@ -15,7 +15,7 @@ namespace asterTake2
 
                 var dist = distanceX*distanceX + distanceY*distanceY;
                 dist = (float) Math.Sqrt(dist);
-                if (dist < 20)
+                if (dist <= asteroid.Radius + ship.Radius)
                 {
                     ship.Lives -= 1;
                     ship.IsRespawning = true;
@@ -41,7 +41,7 @@ namespace asterTake2
 
                     var dist = distanceX*distanceX + distanceY*distanceY;
                     dist = (float) Math.Sqrt(dist);
-                    if (dist < 20)
+                    if (dist <= asteroid.Radius + bullet.Radius)
                     {
                         asteroid.MarkDead();
                         bullet.MarkDead();
@@ -49,11 +49,11 @@ namespace asterTake2
                     }
                 }
             }
-            foreach (var destroyedAsteroid in asteroids.Where(a => !a.Alive && a.Generation == 1).ToList())
-            {
-                var newAsteroids = ShipsAndAsteroidsCreator.CreateSmallerAsteroids(destroyedAsteroid);
-                asteroids.AddRange(newAsteroids);
-            }
+//            foreach (var destroyedAsteroid in asteroids.Where(a => !a.Alive && a.Generation == 1).ToList())
+//            {
+//                var newAsteroids = ShipsAndAsteroidsCreator.CreateSmallerAsteroids(destroyedAsteroid);
+//                asteroids.AddRange(newAsteroids);
+//            }
         }
     }
 }

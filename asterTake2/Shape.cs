@@ -6,7 +6,7 @@ namespace asterTake2
 {
     public class Shape
     {
-        public List<PointF> Points = new List<PointF>();
+        public PointF[] Points;
 
         public Shape Rotate(double angle, PointF rotationCenter)
         {
@@ -17,7 +17,7 @@ namespace asterTake2
             }
             return new Shape()
             {
-                Points = rotatedPoints
+                Points = rotatedPoints.ToArray()
             };
         }
 
@@ -26,20 +26,13 @@ namespace asterTake2
             var offsetedPoints = Points.Select(point => point.Offset(position)).ToList();
             return new Shape()
             {
-                Points = offsetedPoints
+                Points = offsetedPoints.ToArray()
             };
         }
 
         public void Draw(Graphics graphics)
         {
-            for (int i = 0; i < Points.Count; i++)
-            {
-                for (int j = i + 1; j < Points.Count; j++)
-                {
-                    graphics.DrawLine(Pens.BlueViolet, Points[i], Points[j]);
-                }
-            }
-
+            graphics.DrawPolygon(Pens.BlueViolet, Points);
         }
     }
 }

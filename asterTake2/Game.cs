@@ -34,6 +34,8 @@ namespace asterTake2
         private InputHandler _inputReader;
         private readonly Collider _collider;
         private int _level;
+        private List<Bullet> _bulletsDead = new List<Bullet>();
+        private List<Asteroid> _asteroidsDead = new List<Asteroid>();
 
         public Game()
         {
@@ -102,7 +104,16 @@ namespace asterTake2
             }
             foreach (var asteroid in _asteroids.Where(a => a.Alive))
             {
-                asteroid.DrawShape(graphics);
+                asteroid.Draw(graphics);
+            }
+
+            foreach (var asteroid in _asteroidsDead)
+            {
+//                asteroid.Draw(graphics);
+            }
+            foreach (var bullet in _bulletsDead)
+            {
+//                bullet.Draw(graphics);
             }
         }
 
@@ -158,6 +169,8 @@ namespace asterTake2
                 ShipMoverAndShooter.Move(_ship, input);
                 ShipMoverAndShooter.HandleShooting(_ship, input, _bullets, _stopwatch.ElapsedMilliseconds);
             }
+            _bulletsDead.AddRange(_bullets.Where(b => !b.Alive).ToList());
+            _asteroidsDead.AddRange(_asteroids.Where(b => !b.Alive).ToList());
 
             _bullets = _bullets.Where(b => b.Alive).ToList();
             _asteroids = _asteroids.Where(a => a.Alive).ToList();

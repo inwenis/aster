@@ -12,31 +12,32 @@ namespace asterTake2
         {
             var triangle = new Shape
             {
-                Points = new List<PointF>
+                Points = new PointF[]
                 {
-                    new PointF(0, 0),
+                    new PointF(-25, -25),
                     new PointF(25, -25),
-                    new PointF(50, 0)
+                    new PointF(0, -40)
                 }
             };
             var square = new Shape
             {
-                Points = new List<PointF>
+                Points = new PointF[]
                 {
-                    new PointF(0, 0),
-                    new PointF(50, 0),
-                    new PointF(50, 50),
-                    new PointF(0, 50)
+                    new PointF(-25, -25),
+                    new PointF(25, -25),
+                    new PointF(25, 25),
+                    new PointF(-25, 25)
                 }
             };
             var ship = new Ship
             {
-                RotationCenter = new PointF(25, 25),
+                RotationCenter = new PointF(0, 0),
                 Angle = Math.PI * 3.0/4.0,
                 Position = new PointF(500, 300)
             };
             ship.Shapes.Add(triangle);
             ship.Shapes.Add(square);
+            ship.Radius = 33;
             return ship;
         }
 
@@ -51,27 +52,47 @@ namespace asterTake2
             {
                 Position = new PointF(x, Random.Next(600))
             };
+//            var asteroidShape = new Shape
+//            {
+//                Points = new List<PointF>
+//                {
+//                    new PointF(0, 10),
+//                    new PointF(10, 20),
+//                    new PointF(0, 30),
+//                    new PointF(10, 30),
+//                    new PointF(30, 40),
+//                    new PointF(40, 20),
+//                    new PointF(30, 10),
+//                    new PointF(20, 10),
+//                    new PointF(10, 0),
+//                    new PointF(10, 10),
+//                    new PointF(0, 10),
+//                }
+//            };
+
             var asteroidShape = new Shape
             {
-                Points = new List<PointF>
+                Points = new PointF[]
                 {
-                    new PointF(0, 10),
-                    new PointF(10, 20),
-                    new PointF(0, 30),
-                    new PointF(10, 30),
-                    new PointF(30, 40),
-                    new PointF(40, 20),
-                    new PointF(30, 10),
-                    new PointF(20, 10),
-                    new PointF(10, 0),
-                    new PointF(10, 10),
-                    new PointF(0, 10),
+                    new PointF(0, -10),
+                    new PointF(10, -20),
+                    new PointF(20, -10),
+                    new PointF(15, 0),
+                    new PointF(25, 5),
+                    new PointF(12, 20),
+                    new PointF(15, 25),
+                    new PointF(-10, 20),
+                    new PointF(-15, 25),
+                    new PointF(-20, 10),
+                    new PointF(-30, 0),
+                    new PointF(-15, -25)
                 }
             };
             asteroid.Shapes.Add(asteroidShape);
             asteroid.Angle = (Math.PI / 180) * Random.Next(360);
-            asteroid.RotationCenter = new PointF(20, 20);
+            asteroid.RotationCenter = new PointF(0, 0);
             asteroid.Generation = 1;
+            asteroid.Radius = 30;
             return asteroid;
         }
 
@@ -90,14 +111,17 @@ namespace asterTake2
         {
             var position = ship.Position;
             var angle = ship.Angle;
-            return new Bullet(position, angle);
+            return new Bullet(position, angle)
+            {
+                Radius = 10
+            };
         }
 
         public static List<Asteroid> CreateSmallerAsteroids(Asteroid destroyedAsteroid)
         {
             var asteroidShape = new Shape
             {
-                Points = new List<PointF>
+                Points = new PointF[]
                 {
                     new PointF(0, 5),
                     new PointF(5, 10),
