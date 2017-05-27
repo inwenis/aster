@@ -103,8 +103,8 @@ namespace asterTake2
 
         public static Asteroid[] CreateSmallerAsteroids(Asteroid destroyedAsteroid)
         {
-            var asteroid1 = CreateSmallerAsteroid(destroyedAsteroid, Math.PI/2);
-            var asteroid2 = CreateSmallerAsteroid(destroyedAsteroid, -Math.PI/2);
+            var asteroid1 = CreateSmallerAsteroid(destroyedAsteroid, Math.PI/6);
+            var asteroid2 = CreateSmallerAsteroid(destroyedAsteroid, -Math.PI/6);
             return new []{ asteroid1, asteroid2 };
         }
 
