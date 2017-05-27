@@ -49,11 +49,11 @@ namespace asterTake2
                     }
                 }
             }
-//            foreach (var destroyedAsteroid in asteroids.Where(a => !a.Alive && a.Generation == 1).ToList())
-//            {
-//                var newAsteroids = ShipsAndAsteroidsCreator.CreateSmallerAsteroids(destroyedAsteroid);
-//                asteroids.AddRange(newAsteroids);
-//            }
+            foreach (var destroyedAsteroids in asteroids.Where(a => !a.Alive && a.Generation != 0).ToList())
+            {
+                var newAsteroids = ShipsAndAsteroidsCreator.CreateAsteroids(destroyedAsteroids);
+                asteroids.AddRange(newAsteroids);
+            }
         }
     }
 }

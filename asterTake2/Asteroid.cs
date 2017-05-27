@@ -1,4 +1,6 @@
 ﻿using System.Drawing;
+using System.Linq;
+using System.Windows.Media;
 
 namespace asterTake2
 {
@@ -28,6 +30,12 @@ namespace asterTake2
                     .Draw(graphics);
             }
             graphics.DrawEllipse(Pens.Red, Position.X - Radius, Position.Y - Radius, Radius * 2, Radius * 2);
+        }
+
+        public static void Scale(Asteroid asteroid, float scale)
+        {
+            asteroid.Shapes = asteroid.Shapes.Select(s => s.Scale(scale)).ToList();
+            asteroid.Radius = (int) (asteroid.Radius * scale);
         }
     }
 }
