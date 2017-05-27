@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Windows;
 
 namespace asterTake2
 {
@@ -9,8 +10,11 @@ namespace asterTake2
         public bool IsAlive = true;
         public long RespawnStartTime { get; set; }
         public int Radius;
-
         public bool Hide;
+
+        public Vector Acceleration = new Vector(0, -0.1);
+        public Vector Velocity;
+        public Vector MaxVelocity = new Vector(3, 0);
 
         public void DrawShape(Graphics graphics)
         {

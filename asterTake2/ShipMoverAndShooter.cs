@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Windows;
 
 namespace asterTake2
 {
@@ -10,8 +11,16 @@ namespace asterTake2
         {
             if (input.IsUpKeyPressed)
             {
-                var movement = new PointF(0, -2).Rotate(ship.Angle, new PointF(0, 0));
-                ship.Position = ship.Position.Offset(movement);
+                var velocityAddition = ship.Acceleration.Rotate(ship.Angle);
+                var newVelocity = ship.Velocity + velocityAddition;
+                if (newVelocity.LengthSquared < ship.MaxVelocity.LengthSquared)
+                {
+                    ship.Velocity = newVelocity;
+                }
+            }
+            else
+            {
+                ship.Velocity = ship.Velocity * 0.99;
             }
             if (input.IsRightKeyPressed)
             {
@@ -21,6 +30,8 @@ namespace asterTake2
             {
                 ship.Rotate(-Math.PI / 90);
             }
+
+            ship.Position = ship.Position.Offset(ship.Velocity);
         }
 
         public static void HandleShooting(Ship ship, UserInput input, List<Bullet> bullets, long currentMilisecond)
