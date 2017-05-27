@@ -8,6 +8,8 @@ namespace asterTake2
         public bool IsRespawning = false;
         public bool IsAlive = true;
         public long RespawnStartTime { get; set; }
+        public PointF Velocity { get; set; }
+
         public int Radius;
 
         public bool Hide;
