@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Windows;
 
 namespace asterTake2
 {
@@ -10,18 +11,16 @@ namespace asterTake2
         {
             if (input.IsUpKeyPressed)
             {
-                var accelerationInThisFrame = new PointF(0, (float) -0.1).Rotate(ship.Angle);
-                var newVelocity = new PointF(ship.Velocity.X + accelerationInThisFrame.X, ship.Velocity.Y + accelerationInThisFrame.Y);
-                var c2 = newVelocity.X * newVelocity.X + newVelocity.Y * newVelocity.Y;
-                var newValocityLength = Math.Sqrt(c2);
-                if (newValocityLength < 3)
+                var velocityAddition = ship.Acceleration.Rotate(ship.Angle);
+                var newVelocity = ship.Velocity + velocityAddition;
+                if (newVelocity.LengthSquared < ship.MaxVelocity.LengthSquared)
                 {
                     ship.Velocity = newVelocity;
                 }
             }
             else
             {
-                ship.Velocity = new PointF((float)(ship.Velocity.X * 0.99), (float) (ship.Velocity.Y * 0.99));
+                ship.Velocity = ship.Velocity * 0.99;
             }
             if (input.IsRightKeyPressed)
             {
