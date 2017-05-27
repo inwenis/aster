@@ -7,6 +7,25 @@ namespace asterTake2
     internal class ShipsAndAsteroidsCreator
     {
         private static readonly Random Random = new Random(DateTime.Now.Millisecond);
+        private static readonly int AsteroidGeneration2Radius = 30;
+        private static readonly Shape AsteroidGeneration2Shape = new Shape
+        {
+            Points = new[]
+                {
+                    new PointF(0, -10),
+                    new PointF(10, -20),
+                    new PointF(20, -10),
+                    new PointF(15, 0),
+                    new PointF(25, 5),
+                    new PointF(12, 20),
+                    new PointF(15, 25),
+                    new PointF(-10, 20),
+                    new PointF(-15, 25),
+                    new PointF(-20, 10),
+                    new PointF(-30, 0),
+                    new PointF(-15, -25)
+                }
+        };
 
         public static Ship CreateShip()
         {
@@ -52,47 +71,12 @@ namespace asterTake2
             {
                 Position = new PointF(x, Random.Next(600))
             };
-//            var asteroidShape = new Shape
-//            {
-//                Points = new List<PointF>
-//                {
-//                    new PointF(0, 10),
-//                    new PointF(10, 20),
-//                    new PointF(0, 30),
-//                    new PointF(10, 30),
-//                    new PointF(30, 40),
-//                    new PointF(40, 20),
-//                    new PointF(30, 10),
-//                    new PointF(20, 10),
-//                    new PointF(10, 0),
-//                    new PointF(10, 10),
-//                    new PointF(0, 10),
-//                }
-//            };
 
-            var asteroidShape = new Shape
-            {
-                Points = new PointF[]
-                {
-                    new PointF(0, -10),
-                    new PointF(10, -20),
-                    new PointF(20, -10),
-                    new PointF(15, 0),
-                    new PointF(25, 5),
-                    new PointF(12, 20),
-                    new PointF(15, 25),
-                    new PointF(-10, 20),
-                    new PointF(-15, 25),
-                    new PointF(-20, 10),
-                    new PointF(-30, 0),
-                    new PointF(-15, -25)
-                }
-            };
-            asteroid.Shapes.Add(asteroidShape);
+            asteroid.Shapes.Add(AsteroidGeneration2Shape);
             asteroid.Angle = (Math.PI / 180) * Random.Next(360);
             asteroid.RotationCenter = new PointF(0, 0);
-            asteroid.Generation = 1;
-            asteroid.Radius = 30;
+            asteroid.Generation = 2;
+            asteroid.Radius = AsteroidGeneration2Radius;
             return asteroid;
         }
 
@@ -117,44 +101,32 @@ namespace asterTake2
             };
         }
 
-        public static List<Asteroid> CreateSmallerAsteroids(Asteroid destroyedAsteroid)
+        public static Asteroid[] CreateSmallerAsteroids(Asteroid destroyedAsteroid)
         {
-            var asteroidShape = new Shape
-            {
-                Points = new PointF[]
-                {
-                    new PointF(0, 5),
-                    new PointF(5, 10),
-                    new PointF(0, 15),
-                    new PointF(5, 15),
-                    new PointF(15, 20),
-                    new PointF(20, 10),
-                    new PointF(15, 5),
-                    new PointF(10, 5),
-                    new PointF(5, 0),
-                    new PointF(5, 5),
-                    new PointF(0, 5),
-                }
-            };
+            var asteroid1 = CreateSmallerAsteroid(destroyedAsteroid, Math.PI/6);
+            var asteroid2 = CreateSmallerAsteroid(destroyedAsteroid, -Math.PI/6);
+            return new []{ asteroid1, asteroid2 };
+        }
 
-            var asteroid1 = new Asteroid()
+        private static Asteroid CreateSmallerAsteroid(Asteroid destroyedAsteroid, double angleChange)
+        {
+            var asteroid = new Asteroid
             {
-                Position = destroyedAsteroid.Position
+                Position = destroyedAsteroid.Position,
+                Angle = destroyedAsteroid.Angle + angleChange,
+                Generation = destroyedAsteroid.Generation - 1,
+                Shapes = new List<Shape> {AsteroidGeneration2Shape},
+                Radius = AsteroidGeneration2Radius
             };
-            var asteroid2 = new Asteroid()
+            if (asteroid.Generation == 1)
             {
-                Position = destroyedAsteroid.Position
-            };
-            asteroid1.Shapes.Add(asteroidShape);
-            asteroid1.Angle = destroyedAsteroid.Angle + Math.PI / 2;
-            asteroid1.RotationCenter = new PointF(20, 20);
-            asteroid1.Generation = 0;
-            asteroid2.Shapes.Add(asteroidShape);
-            asteroid2.Angle = destroyedAsteroid.Angle - Math.PI / 2;
-            asteroid2.RotationCenter = new PointF(20, 20);
-            asteroid1.Generation = 0;
-
-            return new List<Asteroid>{ asteroid1, asteroid2 };
+                Asteroid.Scale(asteroid, (float) 0.7);
+            }
+            if (asteroid.Generation == 0)
+            {
+                Asteroid.Scale(asteroid, (float) 0.35);
+            }
+            return asteroid;
         }
     }
 }
