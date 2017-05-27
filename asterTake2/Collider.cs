@@ -49,11 +49,6 @@ namespace asterTake2
                     }
                 }
             }
-            foreach (var destroyedAsteroids in asteroids.Where(a => !a.Alive && a.Generation != 0).ToList())
-            {
-                var newAsteroids = ShipsAndAsteroidsCreator.CreateAsteroids(destroyedAsteroids);
-                asteroids.AddRange(newAsteroids);
-            }
         }
     }
 }

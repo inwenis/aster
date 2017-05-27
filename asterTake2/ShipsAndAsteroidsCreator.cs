@@ -7,7 +7,8 @@ namespace asterTake2
     internal class ShipsAndAsteroidsCreator
     {
         private static readonly Random Random = new Random(DateTime.Now.Millisecond);
-        private static readonly Shape AsteroidShapeGeneration2 = new Shape
+        private static readonly int AsteroidGeneration2Radius = 30;
+        private static readonly Shape AsteroidGeneration2Shape = new Shape
         {
             Points = new[]
                 {
@@ -71,11 +72,11 @@ namespace asterTake2
                 Position = new PointF(x, Random.Next(600))
             };
 
-            asteroid.Shapes.Add(AsteroidShapeGeneration2);
+            asteroid.Shapes.Add(AsteroidGeneration2Shape);
             asteroid.Angle = (Math.PI / 180) * Random.Next(360);
             asteroid.RotationCenter = new PointF(0, 0);
             asteroid.Generation = 2;
-            asteroid.Radius = 30;
+            asteroid.Radius = AsteroidGeneration2Radius;
             return asteroid;
         }
 
@@ -100,21 +101,32 @@ namespace asterTake2
             };
         }
 
-        public static Asteroid[] CreateAsteroids(Asteroid destroyedAsteroid)
+        public static Asteroid[] CreateSmallerAsteroids(Asteroid destroyedAsteroid)
         {
-            var asteroid1 = CreateAsteroid();
-            asteroid1.Position = destroyedAsteroid.Position;
-            asteroid1.Angle = destroyedAsteroid.Angle + Math.PI/2;
-            asteroid1.Generation = destroyedAsteroid.Generation - 1;
-            if (asteroid1.Generation == 1) { Asteroid.Scale(asteroid1, (float) 0.7); }
-            if (asteroid1.Generation == 0) { Asteroid.Scale(asteroid1, (float) 0.35); }
-            var asteroid2 = CreateAsteroid();
-            asteroid2.Position = destroyedAsteroid.Position;
-            asteroid2.Angle = destroyedAsteroid.Angle - Math.PI/2;
-            asteroid2.Generation = destroyedAsteroid.Generation - 1;
-            if (asteroid2.Generation == 1) { Asteroid.Scale(asteroid2, (float)0.7); }
-            if (asteroid2.Generation == 0) { Asteroid.Scale(asteroid2, (float)0.35); }
+            var asteroid1 = CreateSmallerAsteroid(destroyedAsteroid, Math.PI/2);
+            var asteroid2 = CreateSmallerAsteroid(destroyedAsteroid, -Math.PI/2);
             return new []{ asteroid1, asteroid2 };
+        }
+
+        private static Asteroid CreateSmallerAsteroid(Asteroid destroyedAsteroid, double angleChange)
+        {
+            var asteroid = new Asteroid
+            {
+                Position = destroyedAsteroid.Position,
+                Angle = destroyedAsteroid.Angle + angleChange,
+                Generation = destroyedAsteroid.Generation - 1,
+                Shapes = new List<Shape> {AsteroidGeneration2Shape},
+                Radius = AsteroidGeneration2Radius
+            };
+            if (asteroid.Generation == 1)
+            {
+                Asteroid.Scale(asteroid, (float) 0.7);
+            }
+            if (asteroid.Generation == 0)
+            {
+                Asteroid.Scale(asteroid, (float) 0.35);
+            }
+            return asteroid;
         }
     }
 }

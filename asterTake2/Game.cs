@@ -64,7 +64,7 @@ namespace asterTake2
             _stopwatch = new Stopwatch();
 
             _ship = ShipsAndAsteroidsCreator.CreateShip();
-            _asteroids = ShipsAndAsteroidsCreator.CreateAsteroids(50);
+            _asteroids = ShipsAndAsteroidsCreator.CreateAsteroids(5);
             _bullets = new List<Bullet>();
             _collider = new Collider();
             _level = 1;
@@ -214,6 +214,12 @@ namespace asterTake2
             }
 
             Collider.HandleAsteroidBulletCollisions(_asteroids, _bullets);
+
+            foreach (var destroyedAsteroid in _asteroids.Where(a => !a.Alive && a.Generation != 0).ToArray())
+            {
+                var newAsteroids = ShipsAndAsteroidsCreator.CreateSmallerAsteroids(destroyedAsteroid);
+                _asteroids.AddRange(newAsteroids);
+            }
 
             if (_asteroids.Count == 0)
             {
