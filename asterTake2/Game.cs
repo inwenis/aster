@@ -37,16 +37,19 @@ namespace asterTake2
         private List<Bullet> _bulletsDead = new List<Bullet>();
         private List<Asteroid> _asteroidsDead = new List<Asteroid>();
         private long ActualFPS;
+        private readonly Mover _mover;
 
         public Game()
         {
             _inputReader = new InputHandler();
             _collider = new Collider();
-
+            var mapWidth = 1000;
+            var mapHeight = 600;
+            _mover = new Mover(mapWidth, mapHeight);
             _window = new Form
             {
                 FormBorderStyle = FormBorderStyle.Fixed3D, //what does this mean?
-                ClientSize = new Size(1000, 600),
+                ClientSize = new Size(mapWidth, mapHeight),
                 MaximizeBox = false,
                 StartPosition = FormStartPosition.CenterScreen,
                 KeyPreview = false
@@ -190,7 +193,7 @@ namespace asterTake2
             }
             foreach (var asteroid in _asteroids)
             {
-                Mover.Move(asteroid);
+                _mover.Move(asteroid);
             }
 
             if (!_ship.IsRespawning)
