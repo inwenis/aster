@@ -36,6 +36,7 @@ namespace asterTake2
         private int _level;
         private List<Bullet> _bulletsDead = new List<Bullet>();
         private List<Asteroid> _asteroidsDead = new List<Asteroid>();
+        private long ActualFPS;
 
         public Game()
         {
@@ -92,6 +93,7 @@ namespace asterTake2
             graphics.DrawString("Asteroids: " + _asteroids.Count, drawFont, drawBrush, 10, 40);
             graphics.DrawString("Level: " + _level, drawFont, drawBrush, 10, 70);
             graphics.DrawString("Bullets: " + _bullets.Count, drawFont, drawBrush, 10, 100);
+            graphics.DrawString("FPS: " + ActualFPS, drawFont, drawBrush, 10, 130);
 
             _ship.DrawShape(graphics);
             for (int index = 0; index < _bullets.Count; index++)
@@ -138,7 +140,14 @@ namespace asterTake2
                 _canvas.Invalidate();
 
                 var end = _stopwatch.ElapsedMilliseconds;
-                if (end - start < _interval)
+
+                var timeTakienForFrame = end - start;
+
+                var howManyFramesFitInOneSecond = 1000/timeTakienForFrame;
+
+                ActualFPS = howManyFramesFitInOneSecond >= 60 ? 60 : howManyFramesFitInOneSecond;
+
+                if (timeTakienForFrame < _interval)
                 {
                     Thread.Sleep((int)(_interval - (_stopwatch.ElapsedMilliseconds - start)));
                 }
