@@ -5,7 +5,7 @@ namespace asterTake2
 {
     public static class ExtensionMethods
     {
-        public static PointF Rotate(this PointF @this, double angle, PointF rotationCenter)
+        public static PointF Rotate(this PointF @this, double angle, PointF rotationCenter = default(PointF))
         {
             var normalizedX = @this.X - rotationCenter.X;
             var normalizedY = @this.Y - rotationCenter.Y;
@@ -20,6 +20,5 @@ namespace asterTake2
         {
             return new PointF(@this.X + offset.X, @this.Y + offset.Y);
         }
-
     }
 }
