@@ -5,20 +5,21 @@ namespace asterTake2
     internal class Bullet
     {
         public PointF Position;
-        private readonly double _angle;
         public bool Alive;
         public int Radius;
+        private readonly double _angle;
 
-        public Bullet(PointF position, double angle)
+        public Bullet(PointF position, double angle, int radius)
         {
             Position = position;
             _angle = angle;
+            Radius = radius;
             Alive = true;
         }
 
         public void Move()
         {
-            var movement = new PointF(0, -6).Rotate(_angle, new PointF(0, 0));
+            var movement = new PointF(0, -6).Rotate(_angle);
             Position = Position.Offset(movement);
             if (Position.X > 1050)
             {

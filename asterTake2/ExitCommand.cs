@@ -1,4 +1,6 @@
-﻿namespace asterTake2
+﻿using System.Linq;
+
+namespace asterTake2
 {
     internal class ExitCommand : IConsoleCommand
     {
@@ -9,14 +11,15 @@
             _game = game;
         }
 
-        public void DoJob()
+        public void DoJob(string input)
         {
             _game._exitConsole = true;
         }
 
-        public bool CanHandle(string[] commandName)
+        public bool CanHandle(string input)
         {
-            return commandName[0] == "exit";
+            var names = new[] {"exit", "quit", "x"};
+            return names.Any(input.StartsWith);
         }
     }
 }

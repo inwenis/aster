@@ -2,7 +2,7 @@
 {
     internal interface IConsoleCommand
     {
-        void DoJob();
-        bool CanHandle(string[] commandName);
+        void DoJob(string input);
+        bool CanHandle(string input);
     }
 }

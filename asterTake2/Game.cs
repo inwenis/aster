@@ -22,7 +22,7 @@ namespace asterTake2
 
         private readonly Ship _ship;
         private List<Asteroid> _asteroids;
-        public List<Bullet> _bullets;
+        public List<Bullet> Bullets;
 
         private bool _isUpKeyPressed;
         private bool _isRightKeyPressed;
@@ -44,7 +44,7 @@ namespace asterTake2
             _commands = new List<IConsoleCommand>()
             {
                 new ExitCommand(this),
-                new CreateBullet(this)
+                new CreateBulletCommand(this)
             };
             _inputReader = new InputHandler();
             _collider = new Collider();
@@ -70,7 +70,7 @@ namespace asterTake2
 
             _ship = ShipsAndAsteroidsCreator.CreateShip();
             _asteroids = ShipsAndAsteroidsCreator.CreateAsteroids(5);
-            _bullets = new List<Bullet>();
+            Bullets = new List<Bullet>();
             _collider = new Collider();
             _level = 1;
         }
@@ -100,11 +100,11 @@ namespace asterTake2
             
             graphics.DrawString("Asteroids: " + _asteroids.Count, drawFont, drawBrush, 10, 40);
             graphics.DrawString("Level: " + _level, drawFont, drawBrush, 10, 70);
-            graphics.DrawString("Bullets: " + _bullets.Count, drawFont, drawBrush, 10, 100);
+            graphics.DrawString("Bullets: " + Bullets.Count, drawFont, drawBrush, 10, 100);
             graphics.DrawString("FPS: " + ActualFPS, drawFont, drawBrush, 10, 130);
 
             _ship.DrawShape(graphics);
-            foreach (var bullet in _bullets.Where(b => b.Alive))
+            foreach (var bullet in Bullets.Where(b => b.Alive))
             {
                 bullet.Draw(graphics);
             }
@@ -174,12 +174,11 @@ namespace asterTake2
                 _exitConsole = false;
                 while (!_exitConsole)
                 {
-                    var line = Console.ReadLine();
-                    var commandName = line.Split(' ');
-                    var command = _commands.SingleOrDefault(c => c.CanHandle(commandName));
+                    var textEnteredByUser = Console.ReadLine();
+                    var command = _commands.SingleOrDefault(c => c.CanHandle(textEnteredByUser));
                     if (command != default(ICommand))
                     {
-                        command.DoJob();
+                        command.DoJob(textEnteredByUser);
                     }
                     else
                     {
@@ -191,14 +190,14 @@ namespace asterTake2
             if (_ship.IsAlive)
             {
                 ShipMoverAndShooter.Move(_ship, input);
-                ShipMoverAndShooter.HandleShooting(_ship, input, _bullets, _stopwatch.ElapsedMilliseconds);
+                ShipMoverAndShooter.HandleShooting(_ship, input, Bullets, _stopwatch.ElapsedMilliseconds);
             }
 
             //TODO don't have to do this every frame
-            _bullets = _bullets.Where(b => b.Alive).ToList();
+            Bullets = Bullets.Where(b => b.Alive).ToList();
             _asteroids = _asteroids.Where(a => a.Alive).ToList();
 
-            foreach (var bullet in _bullets)
+            foreach (var bullet in Bullets)
             {
                 bullet.Move();
             }
@@ -224,7 +223,7 @@ namespace asterTake2
                 }
             }
 
-            Collider.HandleAsteroidBulletCollisions(_asteroids, _bullets);
+            Collider.HandleAsteroidBulletCollisions(_asteroids, Bullets);
 
             foreach (var destroyedAsteroid in _asteroids.Where(a => !a.Alive && a.Generation != 0).ToArray())
             {
@@ -238,29 +237,6 @@ namespace asterTake2
                 int count = (int) (50 * Math.Pow(2, _level - 1));
                 _asteroids = ShipsAndAsteroidsCreator.CreateAsteroids(count);
             }
-        }
-    }
-
-    internal class CreateBullet : IConsoleCommand
-    {
-        private Game _game;
-
-        public CreateBullet(Game game)
-        {
-            _game = game;
-        }
-
-        public void DoJob()
-        {
-            _game._bullets.Add(new Bullet(new PointF(), Math.PI)
-            {
-                
-            });
-        }
-
-        public bool CanHandle(string[] commandName)
-        {
-            return commandName[0] == "bulletAdd";
         }
     }
 }
