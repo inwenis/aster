@@ -1,6 +1,4 @@
-﻿using System;
-using System.Drawing;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 
 namespace asterTake2
 {
@@ -16,7 +14,8 @@ namespace asterTake2
                 IsDownKeyPressed = Keyboard.IsKeyDown(Key.Down),
                 IsShooting = Keyboard.IsKeyDown(Key.LeftCtrl),
                 UserRequestedToExit = Keyboard.IsKeyDown(Key.Escape),
-                UserRequestedDebug = Keyboard.IsKeyDown(Key.D)
+                UserRequestedDebug = Keyboard.IsKeyDown(Key.D),
+                UserRequestedConsole = Keyboard.IsKeyDown(Key.X)
             };
             return userInput;
         }
@@ -31,5 +30,6 @@ namespace asterTake2
         public bool IsShooting { get; set; }
         public bool UserRequestedToExit { get; set; }
         public bool UserRequestedDebug { get; set; }
+        public bool UserRequestedConsole { get; set; }
     }
 }

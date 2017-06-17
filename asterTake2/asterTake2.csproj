@@ -57,9 +57,11 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Collider.cs" />
+    <Compile Include="ExitCommand.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="ComplexShape.cs" />
     <Compile Include="Game.cs" />
+    <Compile Include="IConsoleCommand.cs" />
     <Compile Include="InputHandler.cs" />
     <Compile Include="Mover.cs" />
     <Compile Include="Program.cs" />

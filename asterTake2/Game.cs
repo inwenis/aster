@@ -22,7 +22,7 @@ namespace asterTake2
 
         private readonly Ship _ship;
         private List<Asteroid> _asteroids;
-        private List<Bullet> _bullets;
+        public List<Bullet> _bullets;
 
         private bool _isUpKeyPressed;
         private bool _isRightKeyPressed;
@@ -36,9 +36,16 @@ namespace asterTake2
         private int _level;
         private long ActualFPS;
         private readonly Mover _mover;
+        private List<IConsoleCommand> _commands;
+        public bool _exitConsole;
 
         public Game()
         {
+            _commands = new List<IConsoleCommand>()
+            {
+                new ExitCommand(this),
+                new CreateBullet(this)
+            };
             _inputReader = new InputHandler();
             _collider = new Collider();
             var mapWidth = 1000;
@@ -161,6 +168,26 @@ namespace asterTake2
                 }
             }
 
+            if (input.UserRequestedConsole)
+            {
+                Console.WriteLine("entered console");
+                _exitConsole = false;
+                while (!_exitConsole)
+                {
+                    var line = Console.ReadLine();
+                    var commandName = line.Split(' ');
+                    var command = _commands.SingleOrDefault(c => c.CanHandle(commandName));
+                    if (command != default(ICommand))
+                    {
+                        command.DoJob();
+                    }
+                    else
+                    {
+                        Console.WriteLine("unknown command");
+                    }
+                }
+            }
+
             if (_ship.IsAlive)
             {
                 ShipMoverAndShooter.Move(_ship, input);
@@ -211,6 +238,29 @@ namespace asterTake2
                 int count = (int) (50 * Math.Pow(2, _level - 1));
                 _asteroids = ShipsAndAsteroidsCreator.CreateAsteroids(count);
             }
+        }
+    }
+
+    internal class CreateBullet : IConsoleCommand
+    {
+        private Game _game;
+
+        public CreateBullet(Game game)
+        {
+            _game = game;
+        }
+
+        public void DoJob()
+        {
+            _game._bullets.Add(new Bullet(new PointF(), Math.PI)
+            {
+                
+            });
+        }
+
+        public bool CanHandle(string[] commandName)
+        {
+            return commandName[0] == "bulletAdd";
         }
     }
 }
