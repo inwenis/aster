@@ -95,10 +95,7 @@ namespace asterTake2
         {
             var position = ship.Position;
             var angle = ship.Angle;
-            return new Bullet(position, angle)
-            {
-                Radius = 10
-            };
+            return new Bullet(position, angle, 10);
         }
 
         public static Asteroid[] CreateSmallerAsteroids(Asteroid destroyedAsteroid)
