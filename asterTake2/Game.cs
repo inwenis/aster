@@ -21,7 +21,7 @@ namespace asterTake2
         private readonly Stopwatch _stopwatch;
 
         private readonly Ship _ship;
-        private List<Asteroid> _asteroids;
+        public List<Asteroid> _asteroids;
         public List<Bullet> Bullets;
 
         private bool _isUpKeyPressed;
@@ -43,7 +43,8 @@ namespace asterTake2
             _commands = new List<IConsoleCommand>()
             {
                 new ExitCommand(this),
-                new CreateBulletCommand(this)
+                new CreateBulletCommand(this),
+                new CreateAutoAimBulletOnKeyB(new CreateBulletCommand(this))
             };
             _collider = new Collider();
             var mapWidth = 1000;
@@ -164,7 +165,6 @@ namespace asterTake2
                     Console.WriteLine(asteroid.Position);
                 }
             }
-
             if (Keyboard.IsKeyDown(Key.X))
             {
                 Console.WriteLine("entered console");

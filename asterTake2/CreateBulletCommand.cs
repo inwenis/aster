@@ -16,11 +16,21 @@ namespace asterTake2
 
         public void DoJob(string input)
         {
-            var match = Regex.Match(input, @"^\w*\s*(?:pi)(\d*)/(\d*)$"); //addBullet pi3/4
+            var match = Regex.Match(input, @"^\w*\s+(?:pi)(\d*)/(\d*)\s+(auto)$"); //addBullet pi3/4
             var nominator = int.Parse(match.Groups[1].Value);
             var denominator = int.Parse(match.Groups[2].Value);
+            var isAutoAim = match.Groups[3].Captures.Count == 1;
             var angle = Math.PI * nominator/denominator;
-            var bullet = new Bullet(new PointF(), angle, 10);
+            Bullet bullet;
+            if (isAutoAim)
+            {
+                var target = _game._asteroids.First();
+                bullet = new Bullet(new PointF(), angle, 10, isAutoAim, target);
+            }
+            else
+            {
+                bullet = new Bullet(new PointF(), angle, 10, isAutoAim);
+            }
             _game.Bullets.Add(bullet);
         }
 
