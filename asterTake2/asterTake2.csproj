@@ -63,7 +63,6 @@
     <Compile Include="ComplexShape.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="IConsoleCommand.cs" />
-    <Compile Include="InputHandler.cs" />
     <Compile Include="Mover.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

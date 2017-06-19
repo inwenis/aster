@@ -31,7 +31,6 @@ namespace asterTake2
         private bool _isShooting;
         private long _respawnStartTime;
         private long _respawnTime = 3000;
-        private InputHandler _inputReader;
         private readonly Collider _collider;
         private int _level;
         private long ActualFPS;
@@ -46,7 +45,6 @@ namespace asterTake2
                 new ExitCommand(this),
                 new CreateBulletCommand(this)
             };
-            _inputReader = new InputHandler();
             _collider = new Collider();
             var mapWidth = 1000;
             var mapHeight = 600;
@@ -125,12 +123,11 @@ namespace asterTake2
                 var start = _stopwatch.ElapsedMilliseconds;
                 Application.DoEvents();
 
-                var input = _inputReader.InputReader();
-                if (input.UserRequestedToExit)
+                if (Keyboard.IsKeyDown(Key.Escape))
                 {
                     _isRunning = false;
                 }
-                GameUpdate(input);
+                GameUpdate();
                 
                 _canvas.Invalidate();
 
@@ -158,9 +155,9 @@ namespace asterTake2
             _isRunning = false;
         }
 
-        private void GameUpdate(UserInput input)
+        private void GameUpdate()
         {
-            if(input.UserRequestedDebug)
+            if(Keyboard.IsKeyDown(Key.D))
             {
                 foreach (var asteroid in _asteroids)
                 {
@@ -168,7 +165,7 @@ namespace asterTake2
                 }
             }
 
-            if (input.UserRequestedConsole)
+            if (Keyboard.IsKeyDown(Key.X))
             {
                 Console.WriteLine("entered console");
                 _exitConsole = false;
@@ -189,8 +186,8 @@ namespace asterTake2
 
             if (_ship.IsAlive)
             {
-                ShipMoverAndShooter.Move(_ship, input);
-                ShipMoverAndShooter.HandleShooting(_ship, input, Bullets, _stopwatch.ElapsedMilliseconds);
+                ShipMoverAndShooter.Move(_ship);
+                ShipMoverAndShooter.HandleShooting(_ship, Bullets, _stopwatch.ElapsedMilliseconds);
             }
 
             //TODO don't have to do this every frame
