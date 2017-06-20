@@ -4,7 +4,7 @@
     {
         public void Handle(int scorePoints)
         {
-            if (ShipMoverAndShooter.AutoAimBullets == false && scorePoints > 500)
+            if (ShipMoverAndShooter.AutoAimBullets == false && scorePoints > -1)
             {
                 ShipMoverAndShooter.AutoAimBullets = true;
             }

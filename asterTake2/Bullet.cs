@@ -28,16 +28,16 @@ namespace asterTake2
 
         public void Move()
         {
-            if (_isAutoAim && _target != null)
+            if (_isAutoAim && _target != null && _target.Alive)
             {
                 AutoAimMove();
+                AutoAimHandleBorders();
             }
             else
             {
                 NormalMove();
+                HandleBorders();
             }
-
-            HandleBorders();
         }
 
         private void AutoAimMove()
@@ -46,7 +46,7 @@ namespace asterTake2
             var targetAsteroidVector = new Vector(_target.Position.X, _target.Position.Y);
             var vectorFromBulletToAsteroid = targetAsteroidVector - bulletVector;
             vectorFromBulletToAsteroid.Normalize();
-            vectorFromBulletToAsteroid /= 2;
+            vectorFromBulletToAsteroid /= 4;
             var velocity = _speed.Rotate(_angle);
             velocity = velocity + vectorFromBulletToAsteroid;
             velocity.Normalize();
@@ -83,6 +83,27 @@ namespace asterTake2
                 Alive = false;
             }
         }
+
+        private void AutoAimHandleBorders()
+        {
+            if (Position.X > 1500)
+            {
+                Alive = false;
+            }
+            if (Position.Y > 1050)
+            {
+                Alive = false;
+            }
+            if (Position.X < -550)
+            {
+                Alive = false;
+            }
+            if (Position.Y < -550)
+            {
+                Alive = false;
+            }
+        }
+
 
         public void MarkDead()
         {
