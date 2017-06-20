@@ -115,7 +115,7 @@ namespace asterTake2
             graphics.FillRectangle(Brushes.White, Position.X, Position.Y, 1, 1);
             if (_isAutoAim)
             {
-                graphics.DrawLine(Pens.Coral, Position, Position.Offset(_debugVector * 10));
+                graphics.DrawLine(Pens.Coral, Position, _target.Position);
                 graphics.DrawEllipse(Pens.Coral, Position.X - Radius, Position.Y - Radius, Radius * 2, Radius * 2);
             }
             else
