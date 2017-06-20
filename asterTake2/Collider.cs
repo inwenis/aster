@@ -29,8 +29,9 @@ namespace asterTake2
             }
         }
 
-        public static void HandleAsteroidBulletCollisions(List<Asteroid> asteroids, List<Bullet> bullets)
+        public static List<Asteroid> HandleAsteroidBulletCollisions(List<Asteroid> asteroids, List<Bullet> bullets)
         {
+            var destroyedAsteroids = new List<Asteroid>();
             foreach (var asteroid in asteroids)
             {
                 foreach (var bullet in bullets)
@@ -43,11 +44,13 @@ namespace asterTake2
                     if (dist <= asteroid.Radius + bullet.Radius)
                     {
                         asteroid.MarkDead();
+                        destroyedAsteroids.Add(asteroid);
                         bullet.MarkDead();
                         break;
                     }
                 }
             }
+            return destroyedAsteroids;
         }
     }
 }

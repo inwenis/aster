@@ -25,15 +25,12 @@ namespace asterTake2
 
         public bool CanShoot(long elapsedMilliseconds)
         {
-            if (elapsedMilliseconds - _lastShoot >= _shootingInterval)
-            {
-                _lastShoot = elapsedMilliseconds;
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return elapsedMilliseconds - _lastShoot >= _shootingInterval;
+        }
+
+        public void Shoot(long elapsedMilliseconds)
+        {
+            _lastShoot = elapsedMilliseconds;
         }
     }
 }

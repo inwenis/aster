@@ -33,13 +33,22 @@ namespace asterTake2
             ship.Position = ship.Position.Offset(ship.Velocity);
         }
 
-        public static void HandleShooting(Ship ship, List<Bullet> bullets, long currentMilisecond)
+        public static void HandleShooting(Ship ship, List<Bullet> bullets, long currentMilisecond, List<Asteroid> asteroids)
         {
-            if (Keyboard.IsKeyDown(Key.LeftCtrl) && ship.CanShoot(currentMilisecond))
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) && ship.CanShoot(currentMilisecond) && ShipMoverAndShooter.AutoAimBullets == false)
             {
                 var bullet = ShipsAndAsteroidsCreator.CreateBullet(ship);
                 bullets.Add(bullet);
+                ship.Shoot(currentMilisecond);
+            }
+            else if(Keyboard.IsKeyDown(Key.LeftCtrl) && ship.CanShoot(currentMilisecond) && ShipMoverAndShooter.AutoAimBullets == true)
+            {
+                var bullet = ShipsAndAsteroidsCreator.CreateAutoAimBullet(ship, asteroids);
+                bullets.Add(bullet);
+                ship.Shoot(currentMilisecond);
             }
         }
+
+        public static bool AutoAimBullets { get; set; }
     }
 }

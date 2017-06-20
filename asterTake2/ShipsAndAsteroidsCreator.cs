@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 
 namespace asterTake2
 {
@@ -124,6 +125,15 @@ namespace asterTake2
                 Asteroid.Scale(asteroid, (float) 0.35);
             }
             return asteroid;
+        }
+
+        public static Bullet CreateAutoAimBullet(Ship ship, List<Asteroid> asteroids)
+        {
+            var targetAsteroid = asteroids[Random.Next(asteroids.Count)];
+            var position = ship.Position;
+            var angle = ship.Angle;
+            return new Bullet(position, angle, 10, true, targetAsteroid);
+
         }
     }
 }

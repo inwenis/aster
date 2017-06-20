@@ -37,6 +37,8 @@ namespace asterTake2
         private readonly Mover _mover;
         private List<IConsoleCommand> _commands;
         public bool _exitConsole;
+        private Score _score;
+        private ScoreBasedEvents _scoreBasedEvents;
 
         public Game()
         {
@@ -72,6 +74,8 @@ namespace asterTake2
             Bullets = new List<Bullet>();
             _collider = new Collider();
             _level = 1;
+            _score = new Score();
+            _scoreBasedEvents = new ScoreBasedEvents();
         }
 
         private void _canvas_Paint(object sender, PaintEventArgs e)
@@ -101,6 +105,7 @@ namespace asterTake2
             graphics.DrawString("Level: " + _level, drawFont, drawBrush, 10, 70);
             graphics.DrawString("Bullets: " + Bullets.Count, drawFont, drawBrush, 10, 100);
             graphics.DrawString("FPS: " + ActualFPS, drawFont, drawBrush, 10, 130);
+            graphics.DrawString("Score: " + _score.Points, drawFont, drawBrush, 10, 160);
 
             _ship.DrawShape(graphics);
             foreach (var bullet in Bullets.Where(b => b.Alive))
@@ -187,7 +192,7 @@ namespace asterTake2
             if (_ship.IsAlive)
             {
                 ShipMoverAndShooter.Move(_ship);
-                ShipMoverAndShooter.HandleShooting(_ship, Bullets, _stopwatch.ElapsedMilliseconds);
+                ShipMoverAndShooter.HandleShooting(_ship, Bullets, _stopwatch.ElapsedMilliseconds, _asteroids);
             }
 
             //TODO don't have to do this every frame
@@ -220,7 +225,8 @@ namespace asterTake2
                 }
             }
 
-            Collider.HandleAsteroidBulletCollisions(_asteroids, Bullets);
+            var destroyedAsteroids = Collider.HandleAsteroidBulletCollisions(_asteroids, Bullets);
+            _score.Add(destroyedAsteroids);
 
             foreach (var destroyedAsteroid in _asteroids.Where(a => !a.Alive && a.Generation != 0).ToArray())
             {
@@ -231,9 +237,11 @@ namespace asterTake2
             if (_asteroids.Count == 0)
             {
                 _level += 1;
-                int count = (int) (50 * Math.Pow(2, _level - 1));
+                int count = (int) (5 * Math.Pow(2, _level - 1));
                 _asteroids = ShipsAndAsteroidsCreator.CreateAsteroids(count);
             }
+
+            _scoreBasedEvents.Handle(_score.Points);
         }
     }
 }
