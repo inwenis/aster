@@ -21,7 +21,7 @@ namespace asterTake2
         private readonly Stopwatch _stopwatch;
 
         private readonly Ship _ship;
-        private List<Asteroid> _asteroids;
+        public List<Asteroid> _asteroids;
         public List<Bullet> Bullets;
 
         private bool _isUpKeyPressed;
@@ -31,22 +31,23 @@ namespace asterTake2
         private bool _isShooting;
         private long _respawnStartTime;
         private long _respawnTime = 3000;
-        private InputHandler _inputReader;
         private readonly Collider _collider;
         private int _level;
         private long ActualFPS;
         private readonly Mover _mover;
         private List<IConsoleCommand> _commands;
         public bool _exitConsole;
+        private Score _score;
+        private ScoreBasedEvents _scoreBasedEvents;
 
         public Game()
         {
             _commands = new List<IConsoleCommand>()
             {
                 new ExitCommand(this),
-                new CreateBulletCommand(this)
+                new CreateBulletCommand(this),
+                new CreateAutoAimBulletOnKeyB(new CreateBulletCommand(this))
             };
-            _inputReader = new InputHandler();
             _collider = new Collider();
             var mapWidth = 1000;
             var mapHeight = 600;
@@ -73,6 +74,8 @@ namespace asterTake2
             Bullets = new List<Bullet>();
             _collider = new Collider();
             _level = 1;
+            _score = new Score();
+            _scoreBasedEvents = new ScoreBasedEvents();
         }
 
         private void _canvas_Paint(object sender, PaintEventArgs e)
@@ -102,6 +105,7 @@ namespace asterTake2
             graphics.DrawString("Level: " + _level, drawFont, drawBrush, 10, 70);
             graphics.DrawString("Bullets: " + Bullets.Count, drawFont, drawBrush, 10, 100);
             graphics.DrawString("FPS: " + ActualFPS, drawFont, drawBrush, 10, 130);
+            graphics.DrawString("Score: " + _score.Points, drawFont, drawBrush, 10, 160);
 
             _ship.DrawShape(graphics);
             foreach (var bullet in Bullets.Where(b => b.Alive))
@@ -125,12 +129,11 @@ namespace asterTake2
                 var start = _stopwatch.ElapsedMilliseconds;
                 Application.DoEvents();
 
-                var input = _inputReader.InputReader();
-                if (input.UserRequestedToExit)
+                if (Keyboard.IsKeyDown(Key.Escape))
                 {
                     _isRunning = false;
                 }
-                GameUpdate(input);
+                GameUpdate();
                 
                 _canvas.Invalidate();
 
@@ -158,17 +161,16 @@ namespace asterTake2
             _isRunning = false;
         }
 
-        private void GameUpdate(UserInput input)
+        private void GameUpdate()
         {
-            if(input.UserRequestedDebug)
+            if(Keyboard.IsKeyDown(Key.D))
             {
                 foreach (var asteroid in _asteroids)
                 {
                     Console.WriteLine(asteroid.Position);
                 }
             }
-
-            if (input.UserRequestedConsole)
+            if (Keyboard.IsKeyDown(Key.X))
             {
                 Console.WriteLine("entered console");
                 _exitConsole = false;
@@ -189,8 +191,8 @@ namespace asterTake2
 
             if (_ship.IsAlive)
             {
-                ShipMoverAndShooter.Move(_ship, input);
-                ShipMoverAndShooter.HandleShooting(_ship, input, Bullets, _stopwatch.ElapsedMilliseconds);
+                ShipMoverAndShooter.Move(_ship);
+                ShipMoverAndShooter.HandleShooting(_ship, Bullets, _stopwatch.ElapsedMilliseconds, _asteroids);
             }
 
             //TODO don't have to do this every frame
@@ -223,7 +225,8 @@ namespace asterTake2
                 }
             }
 
-            Collider.HandleAsteroidBulletCollisions(_asteroids, Bullets);
+            var destroyedAsteroids = Collider.HandleAsteroidBulletCollisions(_asteroids, Bullets);
+            _score.Add(destroyedAsteroids);
 
             foreach (var destroyedAsteroid in _asteroids.Where(a => !a.Alive && a.Generation != 0).ToArray())
             {
@@ -234,9 +237,11 @@ namespace asterTake2
             if (_asteroids.Count == 0)
             {
                 _level += 1;
-                int count = (int) (50 * Math.Pow(2, _level - 1));
+                int count = (int) (5 * Math.Pow(2, _level - 1));
                 _asteroids = ShipsAndAsteroidsCreator.CreateAsteroids(count);
             }
+
+            _scoreBasedEvents.Handle(_score.Points);
         }
     }
 }

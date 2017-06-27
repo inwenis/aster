@@ -1,4 +1,6 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
+using System.Windows;
 
 namespace asterTake2
 {
@@ -7,20 +9,63 @@ namespace asterTake2
         public PointF Position;
         public bool Alive;
         public int Radius;
-        private readonly double _angle;
+        private readonly bool _isAutoAim;
+        private readonly Asteroid _target;
+        private double _angle;
+        private Vector _speed;
+        private Vector _debugVector;
 
-        public Bullet(PointF position, double angle, int radius)
+        public Bullet(PointF position, double angle, int radius, bool isAutoAim = false, Asteroid target = null)
         {
             Position = position;
             _angle = angle;
             Radius = radius;
+            _isAutoAim = isAutoAim;
+            _target = target;
             Alive = true;
+            _speed = new Vector(0, -6);
         }
 
         public void Move()
         {
-            var movement = new PointF(0, -6).Rotate(_angle);
+            if (_isAutoAim && _target != null && _target.Alive)
+            {
+                AutoAimMove();
+                AutoAimHandleBorders();
+            }
+            else
+            {
+                NormalMove();
+                HandleBorders();
+            }
+        }
+
+        private void AutoAimMove()
+        {
+            var bulletVector = new Vector(Position.X, Position.Y);
+            var targetAsteroidVector = new Vector(_target.Position.X, _target.Position.Y);
+            var vectorFromBulletToAsteroid = targetAsteroidVector - bulletVector;
+            vectorFromBulletToAsteroid.Normalize();
+            vectorFromBulletToAsteroid /= 4;
+            var velocity = _speed.Rotate(_angle);
+            velocity = velocity + vectorFromBulletToAsteroid;
+            velocity.Normalize();
+            velocity *= 6;
+            var angleBetweenDegrees = Vector.AngleBetween(new Vector(0, -1), velocity);
+            var angleBetweenRadians = angleBetweenDegrees * Math.PI / 180;
+            _angle = angleBetweenRadians;
+            _debugVector = velocity;
+            Position = Position.Offset(velocity);
+        }
+
+        private void NormalMove()
+        {
+            var movement = _speed.Rotate(_angle);
             Position = Position.Offset(movement);
+        }
+
+        private void HandleBorders()
+        {
             if (Position.X > 1050)
             {
                 Alive = false;
@@ -39,15 +84,44 @@ namespace asterTake2
             }
         }
 
-        public void Draw(Graphics graphics)
+        private void AutoAimHandleBorders()
         {
-            graphics.FillRectangle(Brushes.White, Position.X, Position.Y, 1, 1);
-            graphics.DrawEllipse(Pens.Red, Position.X - Radius, Position.Y - Radius, Radius * 2, Radius * 2);
+            if (Position.X > 1500)
+            {
+                Alive = false;
+            }
+            if (Position.Y > 1050)
+            {
+                Alive = false;
+            }
+            if (Position.X < -550)
+            {
+                Alive = false;
+            }
+            if (Position.Y < -550)
+            {
+                Alive = false;
+            }
         }
+
 
         public void MarkDead()
         {
             Alive = false;
+        }
+
+        public void Draw(Graphics graphics)
+        {
+            graphics.FillRectangle(Brushes.White, Position.X, Position.Y, 1, 1);
+            if (_isAutoAim)
+            {
+                graphics.DrawLine(Pens.Coral, Position, _target.Position);
+                graphics.DrawEllipse(Pens.Coral, Position.X - Radius, Position.Y - Radius, Radius * 2, Radius * 2);
+            }
+            else
+            {
+                graphics.DrawEllipse(Pens.Red, Position.X - Radius, Position.Y - Radius, Radius * 2, Radius * 2);
+            }
         }
     }
 }

@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows.Input;
 
 namespace asterTake2
 {
     internal class ShipMoverAndShooter
     {
-        public static void Move(Ship ship, UserInput input)
+        public static void Move(Ship ship)
         {
-            if (input.IsUpKeyPressed)
+            if (Keyboard.IsKeyDown(Key.Up))
             {
                 var velocityAddition = ship.Acceleration.Rotate(ship.Angle);
                 var newVelocity = ship.Velocity + velocityAddition;
@@ -20,11 +21,11 @@ namespace asterTake2
             {
                 ship.Velocity = ship.Velocity * 0.99;
             }
-            if (input.IsRightKeyPressed)
+            if (Keyboard.IsKeyDown(Key.Right))
             {
                 ship.Rotate(Math.PI / 90);
             }
-            if (input.IsLeftKeyPressed)
+            if (Keyboard.IsKeyDown(Key.Left))
             {
                 ship.Rotate(-Math.PI / 90);
             }
@@ -32,13 +33,22 @@ namespace asterTake2
             ship.Position = ship.Position.Offset(ship.Velocity);
         }
 
-        public static void HandleShooting(Ship ship, UserInput input, List<Bullet> bullets, long currentMilisecond)
+        public static void HandleShooting(Ship ship, List<Bullet> bullets, long currentMilisecond, List<Asteroid> asteroids)
         {
-            if (input.IsShooting && ship.CanShoot(currentMilisecond))
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) && ship.CanShoot(currentMilisecond) && ShipMoverAndShooter.AutoAimBullets == false)
             {
                 var bullet = ShipsAndAsteroidsCreator.CreateBullet(ship);
                 bullets.Add(bullet);
+                ship.Shoot(currentMilisecond);
+            }
+            else if(Keyboard.IsKeyDown(Key.LeftCtrl) && ship.CanShoot(currentMilisecond) && ShipMoverAndShooter.AutoAimBullets == true)
+            {
+                var bullet = ShipsAndAsteroidsCreator.CreateAutoAimBullet(ship, asteroids);
+                bullets.Add(bullet);
+                ship.Shoot(currentMilisecond);
             }
         }
+
+        public static bool AutoAimBullets { get; set; }
     }
 }

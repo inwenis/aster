@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
+using System.Windows;
 
 namespace asterTake2
 {
@@ -124,6 +126,35 @@ namespace asterTake2
                 Asteroid.Scale(asteroid, (float) 0.35);
             }
             return asteroid;
+        }
+
+        public static Bullet CreateAutoAimBullet(Ship ship, List<Asteroid> asteroids)
+        {
+            var angles = asteroids.Select(asteroid =>
+            {
+                var a = asteroid.Position.ToVector();
+                var b = new Vector(0, -6).Rotate(ship.Angle);
+                var vectorFromBulletToAsteroid = a - ship.Position.ToVector();
+                var angleBetween = Vector.AngleBetween(b, vectorFromBulletToAsteroid) * Math.PI / 180;
+
+                var abs = Math.Abs(angleBetween);
+                return abs;
+            });
+            var position = ship.Position;
+            var angle = ship.Angle;
+
+            var asteroidBulletVector = asteroids.Zip(angles, (aster, bulletVelocityAster) => new {aster, bulletVelocityAster });
+            var asteroidsInRange = asteroidBulletVector.Where(x => x.bulletVelocityAster < Math.PI/12).ToArray();
+            if (asteroidsInRange.Any())
+            {
+                var targetAster = asteroidsInRange.OrderBy(x => x.bulletVelocityAster).First().aster;
+                
+                return new Bullet(position, angle, 10, true, targetAster);
+            }
+            else
+            {
+                return new Bullet(position, angle, 10);
+            }
         }
     }
 }
