@@ -13,12 +13,11 @@ namespace asterTake2
             _shipStartingPoint = shipStartingPoint;
         }
 
-        public void Run(long currentMillisecond)
+        public void Run()
         {
             _ship.IsRespawning = true;
             _ship.Position = _shipStartingPoint;
             _ship.IsWaitingToBeRespawned = false;
-            _ship.RespawnStartTime = currentMillisecond;
         }
     }
 }

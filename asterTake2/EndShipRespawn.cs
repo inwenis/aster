@@ -9,7 +9,7 @@
             _ship = ship;
         }
 
-        public void Run(long currentMillisecond)
+        public void Run()
         {
             _ship.IsRespawning = false;
         }

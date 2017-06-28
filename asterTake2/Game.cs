@@ -223,18 +223,6 @@ namespace asterTake2
                     HandleShipAsteroidCollision();
                 }
             }
-//            else
-//            {
-//                Console.WriteLine("Respawning... " + _ship.Lives);
-//
-//                _ship.Hide = ((_stopwatch.ElapsedMilliseconds - _ship.RespawnStartTime)/150)%2 == 0;
-//
-//                if (_stopwatch.ElapsedMilliseconds - _ship.RespawnStartTime >= _respawnTime)
-//                {
-//                    _ship.IsRespawning = false;
-//                    Console.WriteLine("Respawning ended...");
-//                }
-//            }
 
             var destroyedAsteroids = Collider.HandleAsteroidBulletCollisions(_asteroids, Bullets);
             _score.Add(destroyedAsteroids);

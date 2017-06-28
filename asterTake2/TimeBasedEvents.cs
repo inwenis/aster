@@ -7,12 +7,10 @@ namespace asterTake2
     internal class TimeBasedEvents
     {
         private readonly List<KeyValuePair<long, IEvent>> _eventToHappen;
-        private List<KeyValuePair<long, Action>> _eventToHappen2;
 
         public TimeBasedEvents()
         {
             _eventToHappen = new List<KeyValuePair<long, IEvent>>();
-            _eventToHappen2 = new List<KeyValuePair<long, Action>>();
         }
 
         public void ScheduleEvent(int milisecondsDelay, long currentMiliSecond, IEvent @event)
@@ -23,8 +21,8 @@ namespace asterTake2
 
         public void ScheduleEvent(int milisecondsDelay, long currentMiliSecond, Action action)
         {
-            var keyValuePair = new KeyValuePair<long, Action>(currentMiliSecond + milisecondsDelay, action);
-            _eventToHappen2.Add(keyValuePair);
+            var @event = new EventInvokingAction(action);
+            ScheduleEvent(milisecondsDelay, currentMiliSecond, @event);
         }
 
         public void Handle(long currentMiliSecond)
@@ -36,22 +34,25 @@ namespace asterTake2
 
             foreach (var @event in eventsToRun)
             {
-                @event.Run(currentMiliSecond);
+                @event.Run();
             }
 
             _eventToHappen.RemoveAll(kv => kv.Key <= currentMiliSecond);
+        }
+    }
 
-            var eventsToRun2 = _eventToHappen2
-                .Where(kv => kv.Key <= currentMiliSecond)
-                .OrderBy(kv => kv.Key)
-                .Select(kv => kv.Value);
+    internal class EventInvokingAction : IEvent
+    {
+        private readonly Action _action;
 
-            foreach (var action in eventsToRun2)
-            {
-                action();
-            }
+        public EventInvokingAction(Action action)
+        {
+            _action = action;
+        }
 
-            _eventToHappen2.RemoveAll(kv => kv.Key <= currentMiliSecond);
+        public void Run()
+        {
+            _action();
         }
     }
 }

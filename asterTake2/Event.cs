@@ -2,6 +2,6 @@
 {
     internal interface IEvent
     {
-        void Run(long currentMillisecond);
+        void Run();
     }
 }
