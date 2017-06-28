@@ -4,8 +4,10 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Threading;
+using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
+using Size = System.Drawing.Size;
 
 namespace asterTake2
 {
@@ -39,6 +41,8 @@ namespace asterTake2
         public bool _exitConsole;
         private Score _score;
         private ScoreBasedEvents _scoreBasedEvents;
+        private PointF _shipStartingPoint;
+        private TimeBasedEvents _timeBasedEvents;
 
         public Game()
         {
@@ -69,13 +73,15 @@ namespace asterTake2
 
             _stopwatch = new Stopwatch();
 
-            _ship = ShipsAndAsteroidsCreator.CreateShip();
+            _shipStartingPoint = new PointF(500, 300);
+            _ship = ShipsAndAsteroidsCreator.CreateShip(_shipStartingPoint);
             _asteroids = ShipsAndAsteroidsCreator.CreateAsteroids(5);
             Bullets = new List<Bullet>();
             _collider = new Collider();
             _level = 1;
             _score = new Score();
             _scoreBasedEvents = new ScoreBasedEvents();
+            _timeBasedEvents = new TimeBasedEvents();
         }
 
         private void _canvas_Paint(object sender, PaintEventArgs e)
@@ -134,7 +140,7 @@ namespace asterTake2
                     _isRunning = false;
                 }
                 GameUpdate();
-                
+
                 _canvas.Invalidate();
 
                 var end = _stopwatch.ElapsedMilliseconds;
@@ -189,7 +195,7 @@ namespace asterTake2
                 }
             }
 
-            if (_ship.IsAlive)
+            if (_ship.IsAlive && !_ship.IsWaitingToBeRespawned)
             {
                 ShipMoverAndShooter.Move(_ship);
                 ShipMoverAndShooter.HandleShooting(_ship, Bullets, _stopwatch.ElapsedMilliseconds, _asteroids);
@@ -208,11 +214,7 @@ namespace asterTake2
                 _mover.Move(asteroid);
             }
 
-            if (!_ship.IsRespawning)
-            {
-                _collider.HandleShipAsteroidCollisions(_asteroids, _ship, _stopwatch.ElapsedMilliseconds);
-            }
-            else
+            if (_ship.IsRespawning || _ship.IsWaitingToBeRespawned)
             {
                 Console.WriteLine("Respawning... " + _ship.Lives);
 
@@ -222,6 +224,14 @@ namespace asterTake2
                 {
                     _ship.IsRespawning = false;
                     Console.WriteLine("Respawning ended...");
+                }
+            }
+            else
+            {
+                var result = _collider.FindAsteroidCollidingWithShipIfAny(_asteroids, _ship, _stopwatch.ElapsedMilliseconds);
+                if (result.Collision)
+                {
+                    HandleShipAsteroidCollision();
                 }
             }
 
@@ -242,6 +252,22 @@ namespace asterTake2
             }
 
             _scoreBasedEvents.Handle(_score.Points);
+            _timeBasedEvents.Handle(_stopwatch.ElapsedMilliseconds);
+        }
+
+        private void HandleShipAsteroidCollision()
+        {
+            Console.WriteLine("you got hit! Lives left " + _ship.Lives);
+            _ship.Lives -= 1;
+            _ship.Velocity = new Vector();
+            _ship.IsWaitingToBeRespawned = true;
+            _timeBasedEvents.ScheduleEvent(5, _stopwatch.ElapsedMilliseconds, new StartShipRespawn(_ship, _shipStartingPoint));
+            _timeBasedEvents.ScheduleEvent(8, _stopwatch.ElapsedMilliseconds, new EndShipRespawn(_ship));
+            if (_ship.Lives == -1)
+            {
+                Console.WriteLine("you dead!");
+                _ship.IsAlive = false;
+            }
         }
     }
 }

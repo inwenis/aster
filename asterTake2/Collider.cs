@@ -5,28 +5,27 @@ namespace asterTake2
 {
     internal class Collider
     {
-        public void HandleShipAsteroidCollisions(List<Asteroid> asteroids, Ship ship, long currentMilisecond)
+        public Result FindAsteroidCollidingWithShipIfAny(List<Asteroid> asteroids, Ship ship, long currentMilisecond)
         {
             foreach (var asteroid in asteroids)
             {
                 var distanceX = asteroid.Position.X - ship.Position.X;
                 var distanceY = asteroid.Position.Y - ship.Position.Y;
-
                 var dist = distanceX*distanceX + distanceY*distanceY;
                 dist = (float) Math.Sqrt(dist);
                 if (dist <= asteroid.Radius + ship.Radius)
                 {
-                    ship.Lives -= 1;
-                    ship.IsRespawning = true;
-                    ship.RespawnStartTime = currentMilisecond;
-                    Console.WriteLine("you got hit! Lives left " + ship.Lives);
-                    if (ship.Lives == -1)
+                    return new Result
                     {
-                        Console.WriteLine("you dead!");
-                        ship.IsAlive = false;
-                    }
+                        Collision = true,
+                        Asteroid = asteroid
+                    };
                 }
             }
+            return new Result
+            {
+                Collision = false
+            };
         }
 
         public static List<Asteroid> HandleAsteroidBulletCollisions(List<Asteroid> asteroids, List<Bullet> bullets)
@@ -52,5 +51,11 @@ namespace asterTake2
             }
             return destroyedAsteroids;
         }
+    }
+
+    internal class Result
+    {
+        public bool Collision;
+        public Asteroid Asteroid;
     }
 }

@@ -9,6 +9,8 @@ namespace asterTake2
         public bool IsRespawning = false;
         public bool IsAlive = true;
         public long RespawnStartTime { get; set; }
+        public bool IsWaitingToBeRespawned;
+
         public int Radius;
         public bool Hide;
 
@@ -18,28 +20,22 @@ namespace asterTake2
 
         public void DrawShape(Graphics graphics)
         {
-            if (IsRespawning && Hide == false)
-            {
-                foreach (var shape in Shapes)
-                {
-                    shape
-                        .Rotate(Angle, RotationCenter)
-                        .Offset(Position)
-                        .Draw(graphics);
-                }
-            }
-            if (!IsRespawning)
-            {
-                foreach (var shape in Shapes)
-                {
-                    shape
-                        .Rotate(Angle, RotationCenter)
-                        .Offset(Position)
-                        .Draw(graphics);
-                }
-            }
             float radius = 33;
-            graphics.DrawEllipse(Pens.Red, Position.X - radius, Position.Y - radius, 2 * radius, 2 * radius);
+            if (!IsWaitingToBeRespawned && !Hide)
+            {
+                graphics.DrawEllipse(Pens.Red, Position.X - radius, Position.Y - radius, 2 * radius, 2 * radius);
+                foreach (var shape in Shapes)
+                {
+                    shape
+                        .Rotate(Angle, RotationCenter)
+                        .Offset(Position)
+                        .Draw(graphics);
+                }
+            }
+            else if (IsWaitingToBeRespawned)
+            {
+                graphics.DrawEllipse(Pens.Aqua, Position.X - radius, Position.Y - radius, 2 * radius, 2 * radius);
+            }
         }
     }
 }
