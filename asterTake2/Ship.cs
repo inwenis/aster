@@ -12,7 +12,7 @@ namespace asterTake2
         public bool IsWaitingToBeRespawned;
 
         public int Radius;
-        public bool Hide;
+        public bool IsVisible;
 
         public Vector Acceleration = new Vector(0, -0.1);
         public Vector Velocity;
@@ -21,7 +21,7 @@ namespace asterTake2
         public void DrawShape(Graphics graphics)
         {
             float radius = 33;
-            if (!IsWaitingToBeRespawned && !Hide)
+            if (!IsWaitingToBeRespawned && !IsVisible)
             {
                 graphics.DrawEllipse(Pens.Red, Position.X - radius, Position.Y - radius, 2 * radius, 2 * radius);
                 foreach (var shape in Shapes)

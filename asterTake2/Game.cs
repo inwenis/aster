@@ -42,7 +42,7 @@ namespace asterTake2
         private Score _score;
         private ScoreBasedEvents _scoreBasedEvents;
         private PointF _shipStartingPoint;
-        private TimeBasedEvents _timeBasedEvents;
+        private TimeBasedActions _timeBasedActions;
 
         public Game()
         {
@@ -81,7 +81,7 @@ namespace asterTake2
             _level = 1;
             _score = new Score();
             _scoreBasedEvents = new ScoreBasedEvents();
-            _timeBasedEvents = new TimeBasedEvents();
+            _timeBasedActions = new TimeBasedActions();
         }
 
         private void _canvas_Paint(object sender, PaintEventArgs e)
@@ -241,27 +241,40 @@ namespace asterTake2
             }
 
             _scoreBasedEvents.Handle(_score.Points);
-            _timeBasedEvents.Handle(_stopwatch.ElapsedMilliseconds);
+            _timeBasedActions.Handle(_stopwatch.ElapsedMilliseconds);
         }
 
         private void HandleShipAsteroidCollision()
         {
             Console.WriteLine("you got hit! Lives left " + _ship.Lives);
-            _ship.Lives -= 1;
-            _ship.Velocity = new Vector();
-            _ship.IsWaitingToBeRespawned = true;
-            _timeBasedEvents.ScheduleEvent(5000, _stopwatch.ElapsedMilliseconds, new StartShipRespawn(_ship, _shipStartingPoint));
-            const int blinkIntervalMiliSeconds = 150;
-            for (var i = 0; 5000 + i * blinkIntervalMiliSeconds < 8000; i++)
-            {
-                _timeBasedEvents.ScheduleEvent(5000 + i * blinkIntervalMiliSeconds, _stopwatch.ElapsedMilliseconds, () => _ship.Hide = !_ship.Hide);
-            }
-            _timeBasedEvents.ScheduleEvent(8000, _stopwatch.ElapsedMilliseconds, new EndShipRespawn(_ship));
-            if (_ship.Lives == -1)
+            if (_ship.Lives == 0)
             {
                 Console.WriteLine("you dead!");
                 _ship.IsAlive = false;
+                return;
             }
+            _ship.Lives -= 1;
+            _ship.Velocity = new Vector();
+            _ship.IsWaitingToBeRespawned = true;
+            _timeBasedActions.ScheduleAction(5000, _stopwatch.ElapsedMilliseconds, StartRespawn);
+            const int blinkIntervalMiliSeconds = 150;
+            for (var i = 0; 5000 + i * blinkIntervalMiliSeconds < 8000; i++)
+            {
+                _timeBasedActions.ScheduleAction(5000 + i * blinkIntervalMiliSeconds, _stopwatch.ElapsedMilliseconds, () => _ship.IsVisible = !_ship.IsVisible);
+            }
+            _timeBasedActions.ScheduleAction(8000, _stopwatch.ElapsedMilliseconds, EndRespawn);
+        }
+
+        private void EndRespawn()
+        {
+            _ship.IsRespawning = false;
+        }
+
+        private void StartRespawn()
+        {
+            _ship.IsRespawning = true;
+            _ship.Position = _shipStartingPoint;
+            _ship.IsWaitingToBeRespawned = false;
         }
     }
 }
