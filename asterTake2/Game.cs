@@ -214,26 +214,27 @@ namespace asterTake2
                 _mover.Move(asteroid);
             }
 
-            if (_ship.IsRespawning || _ship.IsWaitingToBeRespawned)
+            if (!_ship.IsRespawning && !_ship.IsWaitingToBeRespawned)
             {
-                Console.WriteLine("Respawning... " + _ship.Lives);
-
-                _ship.Hide = ((_stopwatch.ElapsedMilliseconds - _ship.RespawnStartTime)/150)%2 == 0;
-
-                if (_stopwatch.ElapsedMilliseconds - _ship.RespawnStartTime >= _respawnTime)
-                {
-                    _ship.IsRespawning = false;
-                    Console.WriteLine("Respawning ended...");
-                }
-            }
-            else
-            {
-                var result = _collider.FindAsteroidCollidingWithShipIfAny(_asteroids, _ship, _stopwatch.ElapsedMilliseconds);
+                var result = _collider.FindAsteroidCollidingWithShipIfAny(_asteroids, _ship,
+                    _stopwatch.ElapsedMilliseconds);
                 if (result.Collision)
                 {
                     HandleShipAsteroidCollision();
                 }
             }
+//            else
+//            {
+//                Console.WriteLine("Respawning... " + _ship.Lives);
+//
+//                _ship.Hide = ((_stopwatch.ElapsedMilliseconds - _ship.RespawnStartTime)/150)%2 == 0;
+//
+//                if (_stopwatch.ElapsedMilliseconds - _ship.RespawnStartTime >= _respawnTime)
+//                {
+//                    _ship.IsRespawning = false;
+//                    Console.WriteLine("Respawning ended...");
+//                }
+//            }
 
             var destroyedAsteroids = Collider.HandleAsteroidBulletCollisions(_asteroids, Bullets);
             _score.Add(destroyedAsteroids);
@@ -261,8 +262,13 @@ namespace asterTake2
             _ship.Lives -= 1;
             _ship.Velocity = new Vector();
             _ship.IsWaitingToBeRespawned = true;
-            _timeBasedEvents.ScheduleEvent(5, _stopwatch.ElapsedMilliseconds, new StartShipRespawn(_ship, _shipStartingPoint));
-            _timeBasedEvents.ScheduleEvent(8, _stopwatch.ElapsedMilliseconds, new EndShipRespawn(_ship));
+            _timeBasedEvents.ScheduleEvent(5000, _stopwatch.ElapsedMilliseconds, new StartShipRespawn(_ship, _shipStartingPoint));
+            const int blinkIntervalMiliSeconds = 150;
+            for (var i = 0; 5000 + i * blinkIntervalMiliSeconds < 8000; i++)
+            {
+                _timeBasedEvents.ScheduleEvent(5000 + i * blinkIntervalMiliSeconds, _stopwatch.ElapsedMilliseconds, () => _ship.Hide = !_ship.Hide);
+            }
+            _timeBasedEvents.ScheduleEvent(8000, _stopwatch.ElapsedMilliseconds, new EndShipRespawn(_ship));
             if (_ship.Lives == -1)
             {
                 Console.WriteLine("you dead!");
