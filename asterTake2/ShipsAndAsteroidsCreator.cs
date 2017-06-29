@@ -29,7 +29,7 @@ namespace asterTake2
                 }
         };
 
-        public static Ship CreateShip()
+        public static Ship CreateShip(PointF startingPoint)
         {
             var triangle = new Shape
             {
@@ -54,11 +54,13 @@ namespace asterTake2
             {
                 RotationCenter = new PointF(0, 0),
                 Angle = Math.PI * 3.0/4.0,
-                Position = new PointF(500, 300)
+                Position = startingPoint
             };
             ship.Shapes.Add(triangle);
             ship.Shapes.Add(square);
             ship.Radius = 33;
+            ship.IsVisible = true;
+            ship.Lives = 3;
             return ship;
         }
 
