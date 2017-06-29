@@ -13,7 +13,7 @@ namespace asterTake2.ConsoleCommands
 
         public void DoJob(string input)
         {
-            _game._exitConsole = true;
+            _game.ExitConsole = true;
         }
 
         public bool CanHandle(string input)

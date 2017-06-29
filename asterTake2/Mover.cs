@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Windows;
 using System.Windows.Input;
 
 namespace asterTake2
@@ -55,6 +56,83 @@ namespace asterTake2
             }
 
             ship.Position = ship.Position.Offset(ship.Velocity);
+        }
+
+        public void Move(Bullet bullet)
+        {
+            if (bullet.IsAutoAim && bullet.Target != null && bullet.Target.Alive)
+            {
+                AutoAimMove(bullet);
+                AutoAimHandleBorders(bullet);
+            }
+            else
+            {
+                NormalMove(bullet);
+                HandleBorders(bullet);
+            }
+        }
+
+        private static void AutoAimMove(Bullet bullet)
+        {
+            var bulletVector = new Vector(bullet.Position.X, bullet.Position.Y);
+            var targetAsteroidVector = new Vector(bullet.Target.Position.X, bullet.Target.Position.Y);
+            var vectorFromBulletToAsteroid = targetAsteroidVector - bulletVector;
+            vectorFromBulletToAsteroid.Normalize();
+            vectorFromBulletToAsteroid /= 4;
+            var velocity = bullet.Speed.Rotate(bullet.Angle);
+            velocity = velocity + vectorFromBulletToAsteroid;
+            velocity.Normalize();
+            velocity *= 6;
+            var angleBetweenDegrees = Vector.AngleBetween(new Vector(0, -1), velocity);
+            var angleBetweenRadians = angleBetweenDegrees * Math.PI / 180;
+            bullet.Angle = angleBetweenRadians;
+            bullet.Position = bullet.Position.Offset(velocity);
+        }
+
+        private static void AutoAimHandleBorders(Bullet bullet)
+        {
+            if (bullet.Position.X > 1500)
+            {
+                bullet.Alive = false;
+            }
+            if (bullet.Position.Y > 1050)
+            {
+                bullet.Alive = false;
+            }
+            if (bullet.Position.X < -550)
+            {
+                bullet.Alive = false;
+            }
+            if (bullet.Position.Y < -550)
+            {
+                bullet.Alive = false;
+            }
+        }
+
+        private static void NormalMove(Bullet bullet)
+        {
+            var movement = bullet.Speed.Rotate(bullet.Angle);
+            bullet.Position = bullet.Position.Offset(movement);
+        }
+
+        private static void HandleBorders(Bullet bullet)
+        {
+            if (bullet.Position.X > 1050)
+            {
+                bullet.Alive = false;
+            }
+            if (bullet.Position.Y > 650)
+            {
+                bullet.Alive = false;
+            }
+            if (bullet.Position.X < -50)
+            {
+                bullet.Alive = false;
+            }
+            if (bullet.Position.Y < -50)
+            {
+                bullet.Alive = false;
+            }
         }
     }
 }

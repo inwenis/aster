@@ -24,7 +24,7 @@ namespace asterTake2.ConsoleCommands
             Bullet bullet;
             if (isAutoAim)
             {
-                var target = _game._asteroids.First();
+                var target = _game.Asteroids.First();
                 bullet = new Bullet(new PointF(), angle, 10, isAutoAim, target);
             }
             else

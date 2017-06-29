@@ -6,7 +6,7 @@ using System.Windows;
 
 namespace asterTake2
 {
-    internal class ShipsAndAsteroidsCreator
+    internal class AsteroidAndBulletCreator
     {
         private static readonly Random Random = new Random(DateTime.Now.Millisecond);
         private static readonly int AsteroidGeneration2Radius = 30;
@@ -28,41 +28,6 @@ namespace asterTake2
                     new PointF(-15, -25)
                 }
         };
-
-        public static Ship CreateShip(PointF startingPoint)
-        {
-            var triangle = new Shape
-            {
-                Points = new PointF[]
-                {
-                    new PointF(-25, -25),
-                    new PointF(25, -25),
-                    new PointF(0, -40)
-                }
-            };
-            var square = new Shape
-            {
-                Points = new PointF[]
-                {
-                    new PointF(-25, -25),
-                    new PointF(25, -25),
-                    new PointF(25, 25),
-                    new PointF(-25, 25)
-                }
-            };
-            var ship = new Ship
-            {
-                RotationCenter = new PointF(0, 0),
-                Angle = Math.PI * 3.0/4.0,
-                Position = startingPoint
-            };
-            ship.Shapes.Add(triangle);
-            ship.Shapes.Add(square);
-            ship.Radius = 33;
-            ship.IsVisible = true;
-            ship.Lives = 3;
-            return ship;
-        }
 
         public static Asteroid CreateAsteroid()
         {

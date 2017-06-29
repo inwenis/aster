@@ -71,7 +71,7 @@
     <Compile Include="ScoreBasedEvents.cs" />
     <Compile Include="Shape.cs" />
     <Compile Include="Ship.cs" />
-    <Compile Include="ShipsAndAsteroidsCreator.cs" />
+    <Compile Include="AsteroidAndBulletCreator.cs" />
     <Compile Include="TimeBasedActions.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
