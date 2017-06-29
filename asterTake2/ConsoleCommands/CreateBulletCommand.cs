@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace asterTake2
+namespace asterTake2.ConsoleCommands
 {
     internal class CreateBulletCommand : IConsoleCommand
     {

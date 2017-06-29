@@ -1,4 +1,4 @@
-﻿namespace asterTake2
+﻿namespace asterTake2.ConsoleCommands
 {
     internal interface IConsoleCommand
     {

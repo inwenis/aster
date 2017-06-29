@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 
-namespace asterTake2
+namespace asterTake2.ConsoleCommands
 {
     internal class ExitCommand : IConsoleCommand
     {

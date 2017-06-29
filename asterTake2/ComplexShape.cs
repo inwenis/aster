@@ -9,8 +9,6 @@ namespace asterTake2
         public PointF Position = new PointF(0, 0);
         public PointF RotationCenter = new PointF(0, 0);
         public double Angle;
-        private long _lastShoot;
-        private readonly long _shootingInterval = 250;
 
         public void Rotate(double angle)
         {
@@ -19,18 +17,18 @@ namespace asterTake2
 
         public void OffsetBy(PointF offset)
         {
-            Position.X += offset.X;
-            Position.Y += offset.Y;
+            Position = Position.Offset(offset);
         }
 
-        public bool CanShoot(long elapsedMilliseconds)
+        public virtual void Draw(Graphics graphics)
         {
-            return elapsedMilliseconds - _lastShoot >= _shootingInterval;
-        }
-
-        public void Shoot(long elapsedMilliseconds)
-        {
-            _lastShoot = elapsedMilliseconds;
+            foreach (var shape in Shapes)
+            {
+                shape
+                    .Rotate(Angle, RotationCenter)
+                    .Offset(Position)
+                    .Draw(graphics);
+            }
         }
     }
 }

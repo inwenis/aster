@@ -7,6 +7,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
+using asterTake2.ConsoleCommands;
 using Size = System.Drawing.Size;
 
 namespace asterTake2
@@ -118,7 +119,7 @@ namespace asterTake2
                 graphics.DrawString("YOU ARE DEAD!", drawFont, drawBrush, _shipStartingPoint.X, _shipStartingPoint.Y);
             }
 
-            _ship.DrawShape(graphics);
+            _ship.Draw(graphics);
             foreach (var bullet in Bullets.Where(b => b.Alive))
             {
                 bullet.Draw(graphics);
@@ -202,8 +203,8 @@ namespace asterTake2
 
             if (_ship.IsAlive && !_ship.IsWaitingToBeRespawned)
             {
-                ShipMoverAndShooter.Move(_ship);
-                ShipMoverAndShooter.HandleShooting(_ship, Bullets, _stopwatch.ElapsedMilliseconds, _asteroids);
+                _mover.Move(_ship);
+                _ship.HandleShooting(Bullets, _stopwatch.ElapsedMilliseconds, _asteroids);
             }
 
             //TODO don't have to do this every frame
@@ -245,7 +246,7 @@ namespace asterTake2
                 _asteroids = ShipsAndAsteroidsCreator.CreateAsteroids(count);
             }
 
-            _scoreBasedEvents.Handle(_score.Points);
+            _scoreBasedEvents.Handle(_score.Points, _ship);
             _timeBasedActions.Handle(_stopwatch.ElapsedMilliseconds);
         }
 
