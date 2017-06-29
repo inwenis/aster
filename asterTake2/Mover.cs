@@ -52,6 +52,12 @@ namespace asterTake2
             HandleBorders(ship);
         }
 
+        public void Move(Line line)
+        {
+            line.Position = line.Position + line.Velocity;
+            line.Angle += line.RotationSpeed;
+        }
+
         private void HandleBorders(ComplexShape shape)
         {
             var maxX = _mapWidth + shape.Radius;

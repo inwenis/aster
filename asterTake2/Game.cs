@@ -33,7 +33,7 @@ namespace asterTake2
         private readonly TimeBasedActions _timeBasedActions;
         private readonly List<IConsoleCommand> _commands;
         public bool ExitConsole;
-        private List<ComplexShape> _lines = new List<ComplexShape>();
+        private List<Line> _lines = new List<Line>();
 
         public Game()
         {
@@ -211,8 +211,7 @@ namespace asterTake2
             }
             foreach (var line in _lines)
             {
-                line.Position = line.Position + line.VelocitySpecial;
-                line.Angle += line.RotationSpecialRadians;
+                _mover.Move(line);
             }
 
             if (!_ship.IsRespawning && !_ship.IsWaitingToBeRespawned)
@@ -230,7 +229,7 @@ namespace asterTake2
 
             foreach (var destroyedAsteroid in destroyedAsteroids)
             {
-                var lines = destroyedAsteroid.GetLinesOfShape();
+                var lines = Line.GetLinesOfShapeFloatingInRandomDirections(destroyedAsteroid);
                 _lines.AddRange(lines); //TODO clean _lines list
             }
 
@@ -272,14 +271,14 @@ namespace asterTake2
             }
             _timeBasedActions.ScheduleAction(8000, _stopwatch.ElapsedMilliseconds, EndRespawn);
 
-            var lines = _ship.GetLinesOfShape();
+            var lines = Line.GetLinesOfShapeFloatingInRandomDirections(_ship);
             _lines.AddRange(lines);
         }
 
         private void EndRespawn()
         {
             _ship.IsRespawning = false;
-            _lines = new List<ComplexShape>();
+            _lines = new List<Line>();
         }
 
         private void StartRespawn()
