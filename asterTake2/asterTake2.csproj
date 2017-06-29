@@ -58,12 +58,12 @@
     </Compile>
     <Compile Include="Collider.cs" />
     <Compile Include="CreateAutoAimBulletOnKeyB.cs" />
-    <Compile Include="CreateBulletCommand.cs" />
-    <Compile Include="ExitCommand.cs" />
+    <Compile Include="ConsoleCommands\CreateBulletCommand.cs" />
+    <Compile Include="ConsoleCommands\ExitCommand.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="ComplexShape.cs" />
     <Compile Include="Game.cs" />
-    <Compile Include="IConsoleCommand.cs" />
+    <Compile Include="ConsoleCommands\IConsoleCommand.cs" />
     <Compile Include="Mover.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -71,8 +71,7 @@
     <Compile Include="ScoreBasedEvents.cs" />
     <Compile Include="Shape.cs" />
     <Compile Include="Ship.cs" />
-    <Compile Include="ShipMoverAndShooter.cs" />
-    <Compile Include="ShipsAndAsteroidsCreator.cs" />
+    <Compile Include="AsteroidAndBulletCreator.cs" />
     <Compile Include="TimeBasedActions.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

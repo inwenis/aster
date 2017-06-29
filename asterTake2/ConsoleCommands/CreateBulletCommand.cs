@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace asterTake2
+namespace asterTake2.ConsoleCommands
 {
     internal class CreateBulletCommand : IConsoleCommand
     {
@@ -24,7 +24,7 @@ namespace asterTake2
             Bullet bullet;
             if (isAutoAim)
             {
-                var target = _game._asteroids.First();
+                var target = _game.Asteroids.First();
                 bullet = new Bullet(new PointF(), angle, 10, isAutoAim, target);
             }
             else

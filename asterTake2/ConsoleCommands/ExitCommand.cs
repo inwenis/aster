@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 
-namespace asterTake2
+namespace asterTake2.ConsoleCommands
 {
     internal class ExitCommand : IConsoleCommand
     {
@@ -13,7 +13,7 @@ namespace asterTake2
 
         public void DoJob(string input)
         {
-            _game._exitConsole = true;
+            _game.ExitConsole = true;
         }
 
         public bool CanHandle(string input)

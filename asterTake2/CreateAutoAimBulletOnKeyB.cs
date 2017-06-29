@@ -1,4 +1,6 @@
-﻿namespace asterTake2
+﻿using asterTake2.ConsoleCommands;
+
+namespace asterTake2
 {
     class CreateAutoAimBulletOnKeyB : IConsoleCommand
     {

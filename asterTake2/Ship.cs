@@ -1,41 +1,100 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
 using System.Windows;
+using System.Windows.Input;
 
 namespace asterTake2
 {
     internal class Ship : ComplexShape
     {
         public int Lives;
-        public bool IsRespawning = false;
-        public bool IsAlive = true;
-        public long RespawnStartTime { get; set; }
+        public bool IsAlive;
+        public bool IsRespawning;
         public bool IsWaitingToBeRespawned;
-
-        public int Radius;
         public bool IsVisible;
-
-        public Vector Acceleration = new Vector(0, -0.1);
+        public bool HasAutoAimBullets;
+        public Vector Acceleration;
         public Vector Velocity;
-        public Vector MaxVelocity = new Vector(3, 0);
+        public Vector MaxVelocity;
+        protected long LastShoot;
+        protected readonly long ShootingInterval;
 
-        public void DrawShape(Graphics graphics)
+        public Ship(PointF position)
         {
-            float radius = 33;
+            var triangle = new Shape
+            {
+                Points = new[]
+                {
+                    new PointF(-25, -25),
+                    new PointF(25, -25),
+                    new PointF(0, -40)
+                }
+            };
+            var square = new Shape
+            {
+                Points = new[]
+                {
+                    new PointF(-25, -25),
+                    new PointF(25, -25),
+                    new PointF(25, 25),
+                    new PointF(-25, 25)
+                }
+            };
+            Shapes.Add(triangle);
+            Shapes.Add(square);
+            RotationCenter = new PointF(0, 0);
+            Position = position;
+            Angle = Math.PI * 3.0 / 4.0;
+            ShootingInterval = 250;
+            HasAutoAimBullets = false;
+            MaxVelocity = new Vector(3, 0);
+            Acceleration = new Vector(0, -0.1);
+            IsVisible = true;
+            IsWaitingToBeRespawned = false;
+            IsRespawning = false;
+            IsAlive = true;
+            Radius = 33;
+            Lives = 3;
+        }
+
+        public override void Draw(Graphics graphics)
+        {
             if (!IsWaitingToBeRespawned && IsVisible)
             {
-                graphics.DrawEllipse(Pens.Red, Position.X - radius, Position.Y - radius, 2 * radius, 2 * radius);
-                foreach (var shape in Shapes)
-                {
-                    shape
-                        .Rotate(Angle, RotationCenter)
-                        .Offset(Position)
-                        .Draw(graphics);
-                }
+                graphics.DrawEllipse(Pens.Red, Position.X - Radius, Position.Y - Radius, 2 * Radius, 2 * Radius);
+                base.Draw(graphics);
             }
             else if (IsWaitingToBeRespawned)
             {
-                graphics.DrawEllipse(Pens.Aqua, Position.X - radius, Position.Y - radius, 2 * radius, 2 * radius);
+                graphics.DrawEllipse(Pens.Aqua, Position.X - Radius, Position.Y - Radius, 2 * Radius, 2 * Radius);
             }
+        }
+
+        public void HandleShooting(List<Bullet> bullets, long currentMilisecond, List<Asteroid> asteroids)
+        {
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) && CanShoot(currentMilisecond) && !HasAutoAimBullets)
+            {
+                var bullet = AsteroidAndBulletCreator.CreateBullet(this);
+                bullets.Add(bullet);
+                Shoot(currentMilisecond);
+            }
+            else if (Keyboard.IsKeyDown(Key.LeftCtrl) && CanShoot(currentMilisecond) && HasAutoAimBullets)
+            {
+                var bullet = AsteroidAndBulletCreator.CreateAutoAimBullet(this, asteroids);
+                bullets.Add(bullet);
+                Shoot(currentMilisecond);
+            }
+        }
+
+        public bool CanShoot(long elapsedMilliseconds)
+        {
+            return elapsedMilliseconds - LastShoot >= ShootingInterval;
+        }
+
+        public void Shoot(long elapsedMilliseconds)
+        {
+            LastShoot = elapsedMilliseconds;
         }
     }
 }

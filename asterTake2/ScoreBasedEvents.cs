@@ -2,11 +2,11 @@
 {
     internal class ScoreBasedEvents
     {
-        public void Handle(int scorePoints)
+        public void Handle(int scorePoints, Ship ship)
         {
-            if (ShipMoverAndShooter.AutoAimBullets == false && scorePoints > 100)
+            if (ship.HasAutoAimBullets == false && scorePoints > 100)
             {
-                ShipMoverAndShooter.AutoAimBullets = true;
+                ship.HasAutoAimBullets = true;
             }
         }
     }
