@@ -21,7 +21,7 @@ namespace asterTake2
         public void DrawShape(Graphics graphics)
         {
             float radius = 33;
-            if (!IsWaitingToBeRespawned && !IsVisible)
+            if (!IsWaitingToBeRespawned && IsVisible)
             {
                 graphics.DrawEllipse(Pens.Red, Position.X - radius, Position.Y - radius, 2 * radius, 2 * radius);
                 foreach (var shape in Shapes)

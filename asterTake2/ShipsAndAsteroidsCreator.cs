@@ -59,6 +59,7 @@ namespace asterTake2
             ship.Shapes.Add(triangle);
             ship.Shapes.Add(square);
             ship.Radius = 33;
+            ship.IsVisible = true;
             return ship;
         }
 
