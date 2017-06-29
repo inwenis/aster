@@ -33,6 +33,7 @@ namespace asterTake2
         private readonly TimeBasedActions _timeBasedActions;
         private readonly List<IConsoleCommand> _commands;
         public bool ExitConsole;
+        private List<ComplexShape> _lines = new List<ComplexShape>();
 
         public Game()
         {
@@ -116,6 +117,10 @@ namespace asterTake2
             foreach (var asteroid in Asteroids.Where(a => a.Alive))
             {
                 asteroid.Draw(graphics);
+            }
+            foreach (var line in _lines)
+            {
+                line.Draw(graphics);
             }
         }
 
@@ -204,6 +209,11 @@ namespace asterTake2
             {
                 _mover.Move(asteroid);
             }
+            foreach (var line in _lines)
+            {
+                line.Position = line.Position.Offset(line.VelocitySpecial);
+                line.Angle += line.RotationSpecialRadians;
+            }
 
             if (!_ship.IsRespawning && !_ship.IsWaitingToBeRespawned)
             {
@@ -217,6 +227,12 @@ namespace asterTake2
 
             var destroyedAsteroids = Collider.HandleAsteroidBulletCollisions(Asteroids, Bullets);
             _score.Add(destroyedAsteroids);
+
+            foreach (var destroyedAsteroid in destroyedAsteroids)
+            {
+                var lines = destroyedAsteroid.GetLinesOfShape();
+                _lines.AddRange(lines); //TODO clean _lines list
+            }
 
             foreach (var destroyedAsteroid in Asteroids.Where(a => !a.Alive && a.Generation != 0).ToArray())
             {
@@ -255,11 +271,15 @@ namespace asterTake2
                 _timeBasedActions.ScheduleAction(5000 + i * blinkIntervalMiliSeconds, _stopwatch.ElapsedMilliseconds, () => _ship.IsVisible = !_ship.IsVisible);
             }
             _timeBasedActions.ScheduleAction(8000, _stopwatch.ElapsedMilliseconds, EndRespawn);
+
+            var lines = _ship.GetLinesOfShape();
+            _lines.AddRange(lines);
         }
 
         private void EndRespawn()
         {
             _ship.IsRespawning = false;
+            _lines = new List<ComplexShape>();
         }
 
         private void StartRespawn()

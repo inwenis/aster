@@ -8,6 +8,15 @@ namespace asterTake2
     {
         public PointF[] Points;
 
+        public Shape()
+        {
+        }
+
+        public Shape(PointF a, PointF b)
+        {
+            Points = new[] {a, b};
+        }
+
         public Shape Rotate(double angle, PointF rotationCenter)
         {
             var rotatedPoints = new List<PointF>();
