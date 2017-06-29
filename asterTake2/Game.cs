@@ -103,6 +103,7 @@ namespace asterTake2
             graphics.DrawString("Bullets: " + Bullets.Count, drawFont, drawBrush, 10, 100);
             graphics.DrawString("FPS: " + _actualFPS, drawFont, drawBrush, 10, 130);
             graphics.DrawString("Score: " + _score.Points, drawFont, drawBrush, 10, 160);
+            graphics.DrawString("Lines: " + _lines.Count, drawFont, drawBrush, 10, 190);
 
             if (!_ship.IsAlive)
             {
@@ -200,7 +201,9 @@ namespace asterTake2
             //TODO don't have to do this every frame
             Bullets = Bullets.Where(b => b.Alive).ToList();
             Asteroids = Asteroids.Where(a => a.Alive).ToList();
+            _lines = _lines.Where(IsInsideWindow).ToList();
 
+            //Move methods are a lie -> they set IsAlive too
             foreach (var bullet in Bullets)
             {
                 _mover.Move(bullet);
@@ -250,6 +253,15 @@ namespace asterTake2
             _timeBasedActions.Handle(_stopwatch.ElapsedMilliseconds);
         }
 
+        private static bool IsInsideWindow(Line line)
+        {
+            if (line.Position.X < -100) return false;
+            if (line.Position.X > 1100) return false;
+            if (line.Position.Y < -100) return false;
+            if (line.Position.Y > 700) return false;
+            return true;
+        }
+
         private void HandleShipAsteroidCollision()
         {
             if (_ship.Lives == 0)
@@ -278,7 +290,6 @@ namespace asterTake2
         private void EndRespawn()
         {
             _ship.IsRespawning = false;
-            _lines = new List<Line>();
         }
 
         private void StartRespawn()
