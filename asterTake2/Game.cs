@@ -113,6 +113,11 @@ namespace asterTake2
             graphics.DrawString("FPS: " + ActualFPS, drawFont, drawBrush, 10, 130);
             graphics.DrawString("Score: " + _score.Points, drawFont, drawBrush, 10, 160);
 
+            if (!_ship.IsAlive)
+            {
+                graphics.DrawString("YOU ARE DEAD!", drawFont, drawBrush, _shipStartingPoint.X, _shipStartingPoint.Y);
+            }
+
             _ship.DrawShape(graphics);
             foreach (var bullet in Bullets.Where(b => b.Alive))
             {
@@ -246,14 +251,15 @@ namespace asterTake2
 
         private void HandleShipAsteroidCollision()
         {
-            Console.WriteLine("you got hit! Lives left " + _ship.Lives);
             if (_ship.Lives == 0)
             {
-                Console.WriteLine("you dead!");
+                Console.WriteLine("you're dead!");
                 _ship.IsAlive = false;
+                _ship.IsVisible = false;
                 return;
             }
             _ship.Lives -= 1;
+            Console.WriteLine("you got hit! Lives left " + _ship.Lives);
             _ship.Velocity = new Vector();
             _ship.IsWaitingToBeRespawned = true;
             _timeBasedActions.ScheduleAction(5000, _stopwatch.ElapsedMilliseconds, StartRespawn);

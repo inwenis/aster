@@ -60,6 +60,7 @@ namespace asterTake2
             ship.Shapes.Add(square);
             ship.Radius = 33;
             ship.IsVisible = true;
+            ship.Lives = 3;
             return ship;
         }
 
