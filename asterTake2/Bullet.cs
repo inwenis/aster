@@ -6,7 +6,7 @@ namespace asterTake2
 {
     internal class Bullet
     {
-        public PointF Position;
+        public Vector Position;
         public bool Alive;
         public int Radius;
         public readonly bool IsAutoAim;
@@ -14,7 +14,7 @@ namespace asterTake2
         public double Angle;
         public Vector Speed;
 
-        public Bullet(PointF position, double angle, int radius, bool isAutoAim = false, Asteroid target = null)
+        public Bullet(Vector position, double angle, int radius, bool isAutoAim = false, Asteroid target = null)
         {
             Position = position;
             Angle = angle;

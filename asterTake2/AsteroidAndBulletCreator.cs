@@ -14,18 +14,18 @@ namespace asterTake2
         {
             Points = new[]
                 {
-                    new PointF(0, -10),
-                    new PointF(10, -20),
-                    new PointF(20, -10),
-                    new PointF(15, 0),
-                    new PointF(25, 5),
-                    new PointF(12, 20),
-                    new PointF(15, 25),
-                    new PointF(-10, 20),
-                    new PointF(-15, 25),
-                    new PointF(-20, 10),
-                    new PointF(-30, 0),
-                    new PointF(-15, -25)
+                    new Vector(0, -10),
+                    new Vector(10, -20),
+                    new Vector(20, -10),
+                    new Vector(15, 0),
+                    new Vector(25, 5),
+                    new Vector(12, 20),
+                    new Vector(15, 25),
+                    new Vector(-10, 20),
+                    new Vector(-15, 25),
+                    new Vector(-20, 10),
+                    new Vector(-30, 0),
+                    new Vector(-15, -25)
                 }
         };
 
@@ -38,12 +38,12 @@ namespace asterTake2
             }
             var asteroid = new Asteroid()
             {
-                Position = new PointF(x, Random.Next(600))
+                Position = new Vector(x, Random.Next(600))
             };
 
             asteroid.Shapes.Add(AsteroidGeneration2Shape);
             asteroid.Angle = (Math.PI / 180) * Random.Next(360);
-            asteroid.RotationCenter = new PointF(0, 0);
+            asteroid.RotationCenter = new Vector(0, 0);
             asteroid.Generation = 2;
             asteroid.Radius = AsteroidGeneration2Radius;
             return asteroid;
@@ -99,9 +99,9 @@ namespace asterTake2
         {
             var angles = asteroids.Select(asteroid =>
             {
-                var a = asteroid.Position.ToVector();
+                var a = asteroid.Position;
                 var b = new Vector(0, -6).Rotate(ship.Angle);
-                var vectorFromBulletToAsteroid = a - ship.Position.ToVector();
+                var vectorFromBulletToAsteroid = a - ship.Position;
                 var angleBetween = Vector.AngleBetween(b, vectorFromBulletToAsteroid) * Math.PI / 180;
 
                 var abs = Math.Abs(angleBetween);

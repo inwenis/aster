@@ -21,7 +21,7 @@ namespace asterTake2
         private readonly Canvas _canvas;
         private bool _isRunning;
         private readonly Stopwatch _stopwatch;
-        private PointF _shipStartingPoint;
+        private Vector _shipStartingPoint;
         private readonly Ship _ship;
         public List<Asteroid> Asteroids;
         public List<Bullet> Bullets;
@@ -33,6 +33,7 @@ namespace asterTake2
         private readonly TimeBasedActions _timeBasedActions;
         private readonly List<IConsoleCommand> _commands;
         public bool ExitConsole;
+        private List<Line> _lines = new List<Line>();
 
         public Game()
         {
@@ -63,7 +64,7 @@ namespace asterTake2
 
             _stopwatch = new Stopwatch();
 
-            _shipStartingPoint = new PointF(500, 300);
+            _shipStartingPoint = new Vector(500, 300);
             _ship = new Ship(_shipStartingPoint);
             Asteroids = AsteroidAndBulletCreator.CreateAsteroids(5);
             Bullets = new List<Bullet>();
@@ -102,10 +103,11 @@ namespace asterTake2
             graphics.DrawString("Bullets: " + Bullets.Count, drawFont, drawBrush, 10, 100);
             graphics.DrawString("FPS: " + _actualFPS, drawFont, drawBrush, 10, 130);
             graphics.DrawString("Score: " + _score.Points, drawFont, drawBrush, 10, 160);
+            graphics.DrawString("Lines: " + _lines.Count, drawFont, drawBrush, 10, 190);
 
             if (!_ship.IsAlive)
             {
-                graphics.DrawString("YOU ARE DEAD!", drawFont, drawBrush, _shipStartingPoint.X, _shipStartingPoint.Y);
+                graphics.DrawString("YOU ARE DEAD!", drawFont, drawBrush, _shipStartingPoint);
             }
 
             _ship.Draw(graphics);
@@ -116,6 +118,10 @@ namespace asterTake2
             foreach (var asteroid in Asteroids.Where(a => a.Alive))
             {
                 asteroid.Draw(graphics);
+            }
+            foreach (var line in _lines)
+            {
+                line.Draw(graphics);
             }
         }
 
@@ -195,7 +201,9 @@ namespace asterTake2
             //TODO don't have to do this every frame
             Bullets = Bullets.Where(b => b.Alive).ToList();
             Asteroids = Asteroids.Where(a => a.Alive).ToList();
+            _lines = _lines.Where(IsInsideWindow).ToList();
 
+            //Move methods are a lie -> they set IsAlive too
             foreach (var bullet in Bullets)
             {
                 _mover.Move(bullet);
@@ -203,6 +211,10 @@ namespace asterTake2
             foreach (var asteroid in Asteroids)
             {
                 _mover.Move(asteroid);
+            }
+            foreach (var line in _lines)
+            {
+                _mover.Move(line);
             }
 
             if (!_ship.IsRespawning && !_ship.IsWaitingToBeRespawned)
@@ -217,6 +229,12 @@ namespace asterTake2
 
             var destroyedAsteroids = Collider.HandleAsteroidBulletCollisions(Asteroids, Bullets);
             _score.Add(destroyedAsteroids);
+
+            foreach (var destroyedAsteroid in destroyedAsteroids)
+            {
+                var lines = Line.GetLinesOfShapeFloatingInRandomDirections(destroyedAsteroid);
+                _lines.AddRange(lines); //TODO clean _lines list
+            }
 
             foreach (var destroyedAsteroid in Asteroids.Where(a => !a.Alive && a.Generation != 0).ToArray())
             {
@@ -233,6 +251,15 @@ namespace asterTake2
 
             _scoreBasedEvents.Handle(_score.Points, _ship);
             _timeBasedActions.Handle(_stopwatch.ElapsedMilliseconds);
+        }
+
+        private static bool IsInsideWindow(Line line)
+        {
+            if (line.Position.X < -100) return false;
+            if (line.Position.X > 1100) return false;
+            if (line.Position.Y < -100) return false;
+            if (line.Position.Y > 700) return false;
+            return true;
         }
 
         private void HandleShipAsteroidCollision()
@@ -255,6 +282,9 @@ namespace asterTake2
                 _timeBasedActions.ScheduleAction(5000 + i * blinkIntervalMiliSeconds, _stopwatch.ElapsedMilliseconds, () => _ship.IsVisible = !_ship.IsVisible);
             }
             _timeBasedActions.ScheduleAction(8000, _stopwatch.ElapsedMilliseconds, EndRespawn);
+
+            var lines = Line.GetLinesOfShapeFloatingInRandomDirections(_ship);
+            _lines.AddRange(lines);
         }
 
         private void EndRespawn()

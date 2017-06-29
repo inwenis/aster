@@ -1,16 +1,26 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Windows;
 
 namespace asterTake2
 {
     public class Shape
     {
-        public PointF[] Points;
+        public Vector[] Points;
 
-        public Shape Rotate(double angle, PointF rotationCenter)
+        public Shape()
         {
-            var rotatedPoints = new List<PointF>();
+        }
+
+        public Shape(Vector a, Vector b)
+        {
+            Points = new[] {a, b};
+        }
+
+        public Shape Rotate(double angle, Vector rotationCenter)
+        {
+            var rotatedPoints = new List<Vector>();
             foreach (var point in Points)
             {
                 rotatedPoints.Add(point.Rotate(angle, rotationCenter));
@@ -21,9 +31,9 @@ namespace asterTake2
             };
         }
 
-        public Shape Offset(PointF position)
+        public Shape Offset(Vector position)
         {
-            var offsetedPoints = Points.Select(point => point.Offset(position));
+            var offsetedPoints = Points.Select(point => point + position);
             return new Shape
             {
                 Points = offsetedPoints.ToArray()
@@ -32,7 +42,7 @@ namespace asterTake2
 
         public Shape Scale(float scale)
         {
-            var scaledPoints = Points.Select(point => new PointF(point.X * scale, point.Y * scale));
+            var scaledPoints = Points.Select(point => point * scale);
             return new Shape
             {
                 Points = scaledPoints.ToArray()

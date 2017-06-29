@@ -20,30 +20,30 @@ namespace asterTake2
         protected long LastShoot;
         protected readonly long ShootingInterval;
 
-        public Ship(PointF position)
+        public Ship(Vector position)
         {
             var triangle = new Shape
             {
                 Points = new[]
                 {
-                    new PointF(-25, -25),
-                    new PointF(25, -25),
-                    new PointF(0, -40)
+                    new Vector(-25, -25),
+                    new Vector(25, -25),
+                    new Vector(0, -40)
                 }
             };
             var square = new Shape
             {
                 Points = new[]
                 {
-                    new PointF(-25, -25),
-                    new PointF(25, -25),
-                    new PointF(25, 25),
-                    new PointF(-25, 25)
+                    new Vector(-25, -25),
+                    new Vector(25, -25),
+                    new Vector(25, 25),
+                    new Vector(-25, 25)
                 }
             };
             Shapes.Add(triangle);
             Shapes.Add(square);
-            RotationCenter = new PointF(0, 0);
+            RotationCenter = new Vector(0, 0);
             Position = position;
             Angle = Math.PI * 3.0 / 4.0;
             ShootingInterval = 250;
