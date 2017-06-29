@@ -6,7 +6,6 @@ namespace asterTake2
     internal class Asteroid : ComplexShape
     {
         public bool Alive;
-        public int Radius;
         public int Generation;
 
         public Asteroid()

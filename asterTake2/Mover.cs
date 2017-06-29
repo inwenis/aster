@@ -20,15 +20,8 @@ namespace asterTake2
         {
             var velocity = new PointF(1, 0);
             var offset = velocity.Rotate(asteroid.Angle);
-            var asteroidMaxX = _mapWidth + asteroid.Radius;
-            var asteroidMinX = 0 - asteroid.Radius;
-            var asteroidMaxY = _mapHeight + asteroid.Radius;
-            var asteroidMinY = 0 - asteroid.Radius;
-            if      (asteroid.Position.X > asteroidMaxX) { asteroid.Position.X = asteroidMinX; }
-            else if (asteroid.Position.X < asteroidMinX) { asteroid.Position.X = asteroidMaxX; }
-            if      (asteroid.Position.Y > asteroidMaxY) { asteroid.Position.Y = asteroidMinY; }
-            else if (asteroid.Position.Y < asteroidMinY) { asteroid.Position.Y = asteroidMaxY; }
             asteroid.Position = asteroid.Position.Offset(offset);
+            HandleBorders(asteroid);
         }
 
         public void Move(Ship ship)
@@ -56,6 +49,31 @@ namespace asterTake2
             }
 
             ship.Position = ship.Position.Offset(ship.Velocity);
+            HandleBorders(ship);
+        }
+
+        private void HandleBorders(ComplexShape shape)
+        {
+            var maxX = _mapWidth + shape.Radius;
+            var minX = 0 - shape.Radius;
+            var maxY = _mapHeight + shape.Radius;
+            var minY = 0 - shape.Radius;
+            if (shape.Position.X > maxX)
+            {
+                shape.Position.X = minX;
+            }
+            else if (shape.Position.X < minX)
+            {
+                shape.Position.X = maxX;
+            }
+            if (shape.Position.Y > maxY)
+            {
+                shape.Position.Y = minY;
+            }
+            else if (shape.Position.Y < minY)
+            {
+                shape.Position.Y = maxY;
+            }
         }
 
         public void Move(Bullet bullet)

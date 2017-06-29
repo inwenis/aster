@@ -14,7 +14,6 @@ namespace asterTake2
         public bool IsWaitingToBeRespawned;
         public bool IsVisible;
         public bool HasAutoAimBullets;
-        public int Radius;
         public Vector Acceleration;
         public Vector Velocity;
         public Vector MaxVelocity;

@@ -9,6 +9,7 @@ namespace asterTake2
         public PointF Position = new PointF(0, 0);
         public PointF RotationCenter = new PointF(0, 0);
         public double Angle;
+        public int Radius;
 
         public void Rotate(double angle)
         {
