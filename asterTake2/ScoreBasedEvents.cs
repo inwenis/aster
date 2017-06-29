@@ -8,6 +8,14 @@
             {
                 ship.HasAutoAimBullets = true;
             }
+            if (scorePoints > 500)
+            {
+                ship.ShootingInterval = 100;
+            }
+            if (scorePoints > 1000)
+            {
+                ship.ShootingInterval = 50;
+            }
         }
     }
 }

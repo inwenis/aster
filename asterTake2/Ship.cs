@@ -18,7 +18,7 @@ namespace asterTake2
         public Vector Velocity;
         public Vector MaxVelocity;
         protected long LastShoot;
-        protected readonly long ShootingInterval;
+        public long ShootingInterval;
 
         public Ship(Vector position)
         {
