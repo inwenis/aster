@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Windows;
 
 namespace asterTake2.ConsoleCommands
 {
@@ -25,11 +26,11 @@ namespace asterTake2.ConsoleCommands
             if (isAutoAim)
             {
                 var target = _game.Asteroids.First();
-                bullet = new Bullet(new PointF(), angle, 10, isAutoAim, target);
+                bullet = new Bullet(new Vector(), angle, 10, isAutoAim, target);
             }
             else
             {
-                bullet = new Bullet(new PointF(), angle, 10, isAutoAim);
+                bullet = new Bullet(new Vector(), angle, 10, isAutoAim);
             }
             _game.Bullets.Add(bullet);
         }

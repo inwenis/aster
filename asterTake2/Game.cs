@@ -21,7 +21,7 @@ namespace asterTake2
         private readonly Canvas _canvas;
         private bool _isRunning;
         private readonly Stopwatch _stopwatch;
-        private PointF _shipStartingPoint;
+        private Vector _shipStartingPoint;
         private readonly Ship _ship;
         public List<Asteroid> Asteroids;
         public List<Bullet> Bullets;
@@ -64,7 +64,7 @@ namespace asterTake2
 
             _stopwatch = new Stopwatch();
 
-            _shipStartingPoint = new PointF(500, 300);
+            _shipStartingPoint = new Vector(500, 300);
             _ship = new Ship(_shipStartingPoint);
             Asteroids = AsteroidAndBulletCreator.CreateAsteroids(5);
             Bullets = new List<Bullet>();
@@ -106,7 +106,7 @@ namespace asterTake2
 
             if (!_ship.IsAlive)
             {
-                graphics.DrawString("YOU ARE DEAD!", drawFont, drawBrush, _shipStartingPoint.X, _shipStartingPoint.Y);
+                graphics.DrawString("YOU ARE DEAD!", drawFont, drawBrush, _shipStartingPoint);
             }
 
             _ship.Draw(graphics);
@@ -211,7 +211,7 @@ namespace asterTake2
             }
             foreach (var line in _lines)
             {
-                line.Position = line.Position.Offset(line.VelocitySpecial);
+                line.Position = line.Position + line.VelocitySpecial;
                 line.Angle += line.RotationSpecialRadians;
             }
 

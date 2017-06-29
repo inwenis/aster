@@ -9,8 +9,8 @@ namespace asterTake2
     public class ComplexShape
     {
         public List<Shape> Shapes = new List<Shape>();
-        public PointF Position = new PointF(0, 0);
-        public PointF RotationCenter = new PointF(0, 0);
+        public Vector Position = new Vector(0, 0);
+        public Vector RotationCenter = new Vector(0, 0);
         public double Angle;
         public int Radius;
         private static readonly Random Random = new Random();
@@ -19,7 +19,7 @@ namespace asterTake2
         {
         }
 
-        public ComplexShape(PointF a, PointF b)
+        public ComplexShape(Vector a, Vector b)
         {
             Shapes.Add(new Shape(a,b));
         }
@@ -29,9 +29,9 @@ namespace asterTake2
             Angle += angle;
         }
 
-        public void OffsetBy(PointF offset)
+        public void OffsetBy(Vector offset)
         {
-            Position = Position.Offset(offset);
+            Position = Position + offset;
         }
 
         public virtual void Draw(Graphics graphics)
@@ -53,8 +53,8 @@ namespace asterTake2
                 var points = shape.Points;
                 for (var i = 0; i < points.Length; i++)
                 {
-                    PointF a;
-                    PointF b;
+                    Vector a;
+                    Vector b;
                     if (i == points.Length - 1)
                     {
                         a = points.Last();
@@ -67,8 +67,7 @@ namespace asterTake2
                     }
                     a = a.Rotate(Angle, RotationCenter);
                     b = b.Rotate(Angle, RotationCenter);
-                    var half = (b.ToVector() + a.ToVector())/2;
-                    var center = ToPoint(half);
+                    var center = (a + b)/2;
                     var line = new ComplexShape(a, b)
                     {
                         Position = Position,
@@ -84,10 +83,5 @@ namespace asterTake2
 
         public double RotationSpecialRadians { get; set; }
         public Vector VelocitySpecial { get; set; }
-
-        private static PointF ToPoint(Vector half)
-        {
-            return new PointF((float) half.X, (float) half.Y);
-        }
     }
 }
