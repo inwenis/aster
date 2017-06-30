@@ -173,6 +173,11 @@ namespace asterTake2
                     Console.WriteLine(asteroid.Position);
                 }
             }
+            if (Keyboard.IsKeyDown(Key.A))
+            {
+                var asteroids = AsteroidAndBulletCreator.CreateAsteroids(10);
+                Asteroids.AddRange(asteroids);
+            }
             if (Keyboard.IsKeyDown(Key.X))
             {
                 Console.WriteLine("entered console");
@@ -297,6 +302,14 @@ namespace asterTake2
             _ship.IsRespawning = true;
             _ship.Position = _shipStartingPoint;
             _ship.IsWaitingToBeRespawned = false;
+            var asteroidsThatAreTooClose = Asteroids
+                .Where(a => (a.Position - _shipStartingPoint).Length < 300);
+            foreach (var asteroid in asteroidsThatAreTooClose)
+            {
+                var vectorFromShipToAsteroid = asteroid.Position - _shipStartingPoint;
+                vectorFromShipToAsteroid.Normalize();
+                asteroid.Velocity = vectorFromShipToAsteroid;
+            }
         }
     }
 }

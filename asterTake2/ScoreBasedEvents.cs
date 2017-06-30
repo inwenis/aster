@@ -16,6 +16,10 @@
             {
                 ship.ShootingInterval = 50;
             }
+            if (scorePoints > 2000)
+            {
+                ship.ShootingInterval = 50 - scorePoints / 1000;
+            }
         }
     }
 }

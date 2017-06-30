@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Drawing;
 using System.Windows;
 using System.Windows.Input;
 
@@ -16,19 +15,24 @@ namespace asterTake2
             _mapHeight = mapHeight;
         }
 
-        public void Move(Asteroid asteroid)
+        public void Move(Asteroid x)
         {
-            var velocity = new Vector(1, 0);
-            var offset = velocity.Rotate(asteroid.Angle);
-            asteroid.Position = asteroid.Position + offset;
-            HandleBorders(asteroid);
+            x.Position += x.Velocity;
+            x.AngleRadians += x.RotationSpeed;
+            HandleBorders(x);
+        }
+
+        public void Move(Line x)
+        {
+            x.Position += x.Velocity;
+            x.AngleRadians += x.RotationSpeed;
         }
 
         public void Move(Ship ship)
         {
             if (Keyboard.IsKeyDown(Key.Up))
             {
-                var velocityAddition = ship.Acceleration.Rotate(ship.Angle);
+                var velocityAddition = ship.Acceleration.Rotate(ship.AngleRadians);
                 var newVelocity = ship.Velocity + velocityAddition;
                 if (newVelocity.LengthSquared < ship.MaxVelocity.LengthSquared)
                 {
@@ -41,21 +45,15 @@ namespace asterTake2
             }
             if (Keyboard.IsKeyDown(Key.Right))
             {
-                ship.Rotate(Math.PI / 90);
+                ship.AngleRadians += Math.PI / 90;
             }
             if (Keyboard.IsKeyDown(Key.Left))
             {
-                ship.Rotate(-Math.PI / 90);
+                ship.AngleRadians += -Math.PI / 90;
             }
 
             ship.Position = ship.Position + ship.Velocity;
             HandleBorders(ship);
-        }
-
-        public void Move(Line line)
-        {
-            line.Position = line.Position + line.Velocity;
-            line.Angle += line.RotationSpeed;
         }
 
         private void HandleBorders(ComplexShape shape)
@@ -87,7 +85,7 @@ namespace asterTake2
             if (bullet.IsAutoAim && bullet.Target != null && bullet.Target.Alive)
             {
                 AutoAimMove(bullet);
-                AutoAimHandleBorders(bullet);
+                HandleBorders(bullet);
             }
             else
             {
@@ -107,56 +105,23 @@ namespace asterTake2
             velocity = velocity + vectorFromBulletToAsteroid;
             velocity.Normalize();
             velocity *= 6;
-            var angleBetweenDegrees = Vector.AngleBetween(new Vector(0, -1), velocity);
-            var angleBetweenRadians = angleBetweenDegrees * Math.PI / 180;
+            var angleBetweenRadians = Helpers.AngleBetweenRadians(new Vector(0, -1), velocity);
             bullet.Angle = angleBetweenRadians;
             bullet.Position = bullet.Position + velocity;
         }
 
-        private static void AutoAimHandleBorders(Bullet bullet)
+        private void HandleBorders(Bullet bullet)
         {
-            if (bullet.Position.X > 1500)
-            {
-                bullet.Alive = false;
-            }
-            if (bullet.Position.Y > 1050)
-            {
-                bullet.Alive = false;
-            }
-            if (bullet.Position.X < -550)
-            {
-                bullet.Alive = false;
-            }
-            if (bullet.Position.Y < -550)
-            {
-                bullet.Alive = false;
-            }
+            if (bullet.Position.X > _mapWidth + 50)  { bullet.Alive = false; }
+            if (bullet.Position.Y > _mapHeight + 50) { bullet.Alive = false; }
+            if (bullet.Position.X < 0 - 50)          { bullet.Alive = false; }
+            if (bullet.Position.Y < 0 - 50)          { bullet.Alive = false; }
         }
 
         private static void NormalMove(Bullet bullet)
         {
             var movement = bullet.Speed.Rotate(bullet.Angle);
             bullet.Position = bullet.Position + movement;
-        }
-
-        private static void HandleBorders(Bullet bullet)
-        {
-            if (bullet.Position.X > 1050)
-            {
-                bullet.Alive = false;
-            }
-            if (bullet.Position.Y > 650)
-            {
-                bullet.Alive = false;
-            }
-            if (bullet.Position.X < -50)
-            {
-                bullet.Alive = false;
-            }
-            if (bullet.Position.Y < -50)
-            {
-                bullet.Alive = false;
-            }
         }
     }
 }
