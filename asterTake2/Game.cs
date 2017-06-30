@@ -266,6 +266,10 @@ namespace asterTake2
                 _level += 1;
                 int count = (int) (5 * Math.Pow(2, _level - 1));
                 Asteroids = AsteroidAndBulletCreator.CreateAsteroids(count);
+                for (int i = 0; i < _level; i++)
+                {
+                    Asteroids.Add(AsteroidAndBulletCreator.CreateAsteroid(3));
+                }
             }
 
             _scoreBasedEvents.Handle(_score.Points, _ship);
