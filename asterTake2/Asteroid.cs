@@ -7,6 +7,7 @@ namespace asterTake2
     {
         public bool Alive;
         public int Generation;
+        public int Lives;
 
         public Asteroid()
         {

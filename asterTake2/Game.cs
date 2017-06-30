@@ -178,6 +178,11 @@ namespace asterTake2
                 var asteroids = AsteroidAndBulletCreator.CreateAsteroids(10);
                 Asteroids.AddRange(asteroids);
             }
+            if (Keyboard.IsKeyDown(Key.B))
+            {
+                var asteroid = AsteroidAndBulletCreator.CreateAsteroid(3);
+                Asteroids.Add(asteroid);
+            }
             if (Keyboard.IsKeyDown(Key.X))
             {
                 Console.WriteLine("entered console");
