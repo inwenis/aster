@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Windows;
 
@@ -42,7 +41,9 @@ namespace asterTake2
             };
 
             asteroid.Shapes.Add(AsteroidGeneration2Shape);
+            asteroid.Velocity = new Vector(0, -1).Rotate(Random.NextDouble() * 2 * Math.PI);
             asteroid.AngleRadians = (Math.PI / 180) * Random.Next(360);
+            asteroid.RotationSpeed = (Random.NextDouble() - 0.5) * Math.PI/12;
             asteroid.RotationCenter = new Vector(0, 0);
             asteroid.Generation = 2;
             asteroid.Radius = AsteroidGeneration2Radius;
@@ -80,6 +81,8 @@ namespace asterTake2
             {
                 Position = destroyedAsteroid.Position,
                 AngleRadians = destroyedAsteroid.AngleRadians + angleChange,
+                RotationSpeed = (Random.NextDouble() - 0.5) * Math.PI/12,
+                Velocity = new Vector(0, -1).Rotate(Helpers.AngleBetweenRadians(new Vector(0,-1), destroyedAsteroid.Velocity) + angleChange),
                 Generation = destroyedAsteroid.Generation - 1,
                 Shapes = new List<Shape> {AsteroidGeneration2Shape},
                 Radius = AsteroidGeneration2Radius

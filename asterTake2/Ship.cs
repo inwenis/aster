@@ -15,7 +15,6 @@ namespace asterTake2
         public bool IsVisible;
         public bool HasAutoAimBullets;
         public Vector Acceleration;
-        public Vector Velocity;
         public Vector MaxVelocity;
         protected long LastShoot;
         public long ShootingInterval;

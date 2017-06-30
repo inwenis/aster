@@ -8,8 +8,6 @@ namespace asterTake2
     public class Line : ComplexShape
     {
         static readonly Random Random = new Random();
-        public double RotationSpeed;
-        public Vector Velocity;
 
         public Line(Vector a, Vector b)
         {

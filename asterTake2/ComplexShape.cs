@@ -10,17 +10,10 @@ namespace asterTake2
         public Vector Position = new Vector(0, 0);
         public Vector RotationCenter = new Vector(0, 0);
         public double AngleRadians;
+        //Ship derives from ComplexShape and does not use RotationSpeed at all
+        public double RotationSpeed;
+        public Vector Velocity;
         public int Radius;
-
-        public void Rotate(double angle)
-        {
-            AngleRadians += angle;
-        }
-
-        public void OffsetBy(Vector offset)
-        {
-            Position = Position + offset;
-        }
 
         public virtual void Draw(Graphics graphics)
         {

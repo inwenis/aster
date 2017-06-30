@@ -1,6 +1,5 @@
 ﻿using System.Drawing;
 using System.Linq;
-using System.Windows;
 
 namespace asterTake2
 {
@@ -8,12 +7,10 @@ namespace asterTake2
     {
         public bool Alive;
         public int Generation;
-        public Vector Velocity;
 
         public Asteroid()
         {
             Alive = true;
-            Velocity = new Vector(0, -1);
         }
 
         public void MarkDead()
@@ -25,7 +22,7 @@ namespace asterTake2
         {
             base.Draw(graphics);
             graphics.DrawEllipse(Pens.Red, Position.X - Radius, Position.Y - Radius, Radius * 2, Radius * 2);
-            graphics.DrawLine(Pens.BlanchedAlmond, Position, Position + new Vector(0, -60).Rotate(AngleRadians));
+            graphics.DrawLine(Pens.BlanchedAlmond, Position, Position + Velocity * 60);
         }
 
         public static void Scale(Asteroid asteroid, float scale)
