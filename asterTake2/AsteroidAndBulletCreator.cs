@@ -28,6 +28,17 @@ namespace asterTake2
                 }
         };
 
+        public static List<Asteroid> CreateAsteroids(int count = 50)
+        {
+            var asteroids = new List<Asteroid>();
+            for (var i = 0; i < count; i++)
+            {
+                var asteroid = CreateAsteroid();
+                asteroids.Add(asteroid);
+            }
+            return asteroids;
+        }
+
         public static Asteroid CreateAsteroid()
         {
             var x = Random.Next(1000);
@@ -50,24 +61,6 @@ namespace asterTake2
             return asteroid;
         }
 
-        public static List<Asteroid> CreateAsteroids(int count = 50)
-        {
-            var asteroids = new List<Asteroid>();
-            for (var i = 0; i < count; i++)
-            {
-                var asteroid = CreateAsteroid();
-                asteroids.Add(asteroid);
-            }
-            return asteroids;
-        }
-
-        public static Bullet CreateBullet(ComplexShape ship)
-        {
-            var position = ship.Position;
-            var angle = ship.AngleRadians;
-            return new Bullet(position, angle, 10);
-        }
-
         public static Asteroid[] CreateSmallerAsteroids(Asteroid destroyedAsteroid)
         {
             var asteroid1 = CreateSmallerAsteroid(destroyedAsteroid, Math.PI/6);
@@ -77,25 +70,26 @@ namespace asterTake2
 
         private static Asteroid CreateSmallerAsteroid(Asteroid destroyedAsteroid, double angleChange)
         {
-            var asteroid = new Asteroid
+            var asteroid1 = CreateAsteroid();
+            asteroid1.Position = destroyedAsteroid.Position;
+            asteroid1.Velocity = destroyedAsteroid.Velocity.Rotate(angleChange);
+            asteroid1.Generation = destroyedAsteroid.Generation - 1;
+            if (asteroid1.Generation == 1)
             {
-                Position = destroyedAsteroid.Position,
-                AngleRadians = destroyedAsteroid.AngleRadians + angleChange,
-                RotationSpeed = (Random.NextDouble() - 0.5) * Math.PI/24,
-                Velocity = new Vector(0, -1).Rotate(Helpers.AngleBetweenRadians(new Vector(0,-1), destroyedAsteroid.Velocity) + angleChange),
-                Generation = destroyedAsteroid.Generation - 1,
-                Shapes = new List<Shape> {AsteroidGeneration2Shape},
-                Radius = AsteroidGeneration2Radius
-            };
-            if (asteroid.Generation == 1)
-            {
-                Asteroid.Scale(asteroid, (float) 0.7);
+                Asteroid.Scale(asteroid1, (float) 0.7);
             }
-            if (asteroid.Generation == 0)
+            else if (asteroid1.Generation == 0)
             {
-                Asteroid.Scale(asteroid, (float) 0.35);
+                Asteroid.Scale(asteroid1, (float) 0.35);
             }
-            return asteroid;
+            return asteroid1;
+        }
+
+        public static Bullet CreateBullet(ComplexShape ship)
+        {
+            var position = ship.Position;
+            var angle = ship.AngleRadians;
+            return new Bullet(position, angle, 10);
         }
 
         public static Bullet CreateAutoAimBullet(Ship ship, List<Asteroid> asteroids)
