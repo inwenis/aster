@@ -183,6 +183,15 @@ namespace asterTake2
                 var asteroid = AsteroidAndBulletCreator.CreateAsteroid(3);
                 Asteroids.Add(asteroid);
             }
+            if (Keyboard.IsKeyDown(Key.C))
+            {
+                foreach (var asteroid in Asteroids)
+                {
+                    asteroid.MarkDead();
+                    var lines = Line.GetLinesOfShapeFloatingInRandomDirections(asteroid);
+                    _lines.AddRange(lines);
+                }
+            }
             if (Keyboard.IsKeyDown(Key.X))
             {
                 Console.WriteLine("entered console");
