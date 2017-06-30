@@ -307,7 +307,8 @@ namespace asterTake2
             foreach (var asteroid in asteroidsThatAreTooClose)
             {
                 var vectorFromShipToAsteroid = asteroid.Position - _shipStartingPoint;
-                asteroid.AngleRadians = Helpers.AngleBetweenRadians(new Vector(0,-1), vectorFromShipToAsteroid);
+                vectorFromShipToAsteroid.Normalize();
+                asteroid.Velocity = vectorFromShipToAsteroid;
             }
         }
     }
