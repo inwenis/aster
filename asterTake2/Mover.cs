@@ -18,9 +18,8 @@ namespace asterTake2
 
         public void Move(Asteroid asteroid)
         {
-            var velocity = new Vector(1, 0);
-            var offset = velocity.Rotate(asteroid.Angle);
-            asteroid.Position = asteroid.Position + offset;
+            var offset = asteroid.Velocity.Rotate(asteroid.AngleRadians);
+            asteroid.Position += offset;
             HandleBorders(asteroid);
         }
 
@@ -28,7 +27,7 @@ namespace asterTake2
         {
             if (Keyboard.IsKeyDown(Key.Up))
             {
-                var velocityAddition = ship.Acceleration.Rotate(ship.Angle);
+                var velocityAddition = ship.Acceleration.Rotate(ship.AngleRadians);
                 var newVelocity = ship.Velocity + velocityAddition;
                 if (newVelocity.LengthSquared < ship.MaxVelocity.LengthSquared)
                 {
@@ -55,7 +54,7 @@ namespace asterTake2
         public void Move(Line line)
         {
             line.Position = line.Position + line.Velocity;
-            line.Angle += line.RotationSpeed;
+            line.AngleRadians += line.RotationSpeed;
         }
 
         private void HandleBorders(ComplexShape shape)
@@ -107,8 +106,7 @@ namespace asterTake2
             velocity = velocity + vectorFromBulletToAsteroid;
             velocity.Normalize();
             velocity *= 6;
-            var angleBetweenDegrees = Vector.AngleBetween(new Vector(0, -1), velocity);
-            var angleBetweenRadians = angleBetweenDegrees * Math.PI / 180;
+            var angleBetweenRadians = Helpers.AngleBetweenRadians(new Vector(0, -1), velocity);
             bullet.Angle = angleBetweenRadians;
             bullet.Position = bullet.Position + velocity;
         }

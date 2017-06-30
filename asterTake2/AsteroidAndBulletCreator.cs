@@ -42,7 +42,7 @@ namespace asterTake2
             };
 
             asteroid.Shapes.Add(AsteroidGeneration2Shape);
-            asteroid.Angle = (Math.PI / 180) * Random.Next(360);
+            asteroid.AngleRadians = (Math.PI / 180) * Random.Next(360);
             asteroid.RotationCenter = new Vector(0, 0);
             asteroid.Generation = 2;
             asteroid.Radius = AsteroidGeneration2Radius;
@@ -63,7 +63,7 @@ namespace asterTake2
         public static Bullet CreateBullet(ComplexShape ship)
         {
             var position = ship.Position;
-            var angle = ship.Angle;
+            var angle = ship.AngleRadians;
             return new Bullet(position, angle, 10);
         }
 
@@ -79,7 +79,7 @@ namespace asterTake2
             var asteroid = new Asteroid
             {
                 Position = destroyedAsteroid.Position,
-                Angle = destroyedAsteroid.Angle + angleChange,
+                AngleRadians = destroyedAsteroid.AngleRadians + angleChange,
                 Generation = destroyedAsteroid.Generation - 1,
                 Shapes = new List<Shape> {AsteroidGeneration2Shape},
                 Radius = AsteroidGeneration2Radius
@@ -100,15 +100,14 @@ namespace asterTake2
             var angles = asteroids.Select(asteroid =>
             {
                 var a = asteroid.Position;
-                var b = new Vector(0, -6).Rotate(ship.Angle);
+                var b = new Vector(0, -6).Rotate(ship.AngleRadians);
                 var vectorFromBulletToAsteroid = a - ship.Position;
-                var angleBetween = Vector.AngleBetween(b, vectorFromBulletToAsteroid) * Math.PI / 180;
-
+                var angleBetween = Helpers.AngleBetweenRadians(b, vectorFromBulletToAsteroid);
                 var abs = Math.Abs(angleBetween);
                 return abs;
             });
             var position = ship.Position;
-            var angle = ship.Angle;
+            var angle = ship.AngleRadians;
 
             var asteroidBulletVector = asteroids.Zip(angles, (aster, bulletVelocityAster) => new {aster, bulletVelocityAster });
             var asteroidsInRange = asteroidBulletVector.Where(x => x.bulletVelocityAster < Math.PI/12).ToArray();

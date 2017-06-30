@@ -45,7 +45,7 @@ namespace asterTake2
             Shapes.Add(square);
             RotationCenter = new Vector(0, 0);
             Position = position;
-            Angle = Math.PI * 3.0 / 4.0;
+            AngleRadians = Math.PI * 3.0 / 4.0;
             ShootingInterval = 250;
             HasAutoAimBullets = false;
             MaxVelocity = new Vector(3, 0);

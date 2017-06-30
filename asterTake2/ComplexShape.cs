@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Windows;
 
@@ -10,13 +9,12 @@ namespace asterTake2
         public List<Shape> Shapes = new List<Shape>();
         public Vector Position = new Vector(0, 0);
         public Vector RotationCenter = new Vector(0, 0);
-        public double Angle;
+        public double AngleRadians;
         public int Radius;
-        private static readonly Random Random = new Random();
 
         public void Rotate(double angle)
         {
-            Angle += angle;
+            AngleRadians += angle;
         }
 
         public void OffsetBy(Vector offset)
@@ -29,7 +27,7 @@ namespace asterTake2
             foreach (var shape in Shapes)
             {
                 shape
-                    .Rotate(Angle, RotationCenter)
+                    .Rotate(AngleRadians, RotationCenter)
                     .Offset(Position)
                     .Draw(graphics);
             }

@@ -39,8 +39,8 @@ namespace asterTake2
                         a = points[i];
                         b = points[i + 1];
                     }
-                    a = a.Rotate(complexShape.Angle, complexShape.RotationCenter);
-                    b = b.Rotate(complexShape.Angle, complexShape.RotationCenter);
+                    a = a.Rotate(complexShape.AngleRadians, complexShape.RotationCenter);
+                    b = b.Rotate(complexShape.AngleRadians, complexShape.RotationCenter);
                     var center = (a + b) / 2;
                     var line = new Line(a, b)
                     {

@@ -297,6 +297,13 @@ namespace asterTake2
             _ship.IsRespawning = true;
             _ship.Position = _shipStartingPoint;
             _ship.IsWaitingToBeRespawned = false;
+            var asteroidsThatAreTooClose = Asteroids
+                .Where(a => (a.Position - _shipStartingPoint).Length < 300);
+            foreach (var asteroid in asteroidsThatAreTooClose)
+            {
+                var vectorFromShipToAsteroid = asteroid.Position - _shipStartingPoint;
+                asteroid.AngleRadians = Helpers.AngleBetweenRadians(new Vector(0,-1), vectorFromShipToAsteroid);
+            }
         }
     }
 }
