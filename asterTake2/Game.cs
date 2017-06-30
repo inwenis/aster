@@ -173,6 +173,11 @@ namespace asterTake2
                     Console.WriteLine(asteroid.Position);
                 }
             }
+            if (Keyboard.IsKeyDown(Key.A))
+            {
+                var asteroids = AsteroidAndBulletCreator.CreateAsteroids(10);
+                Asteroids.AddRange(asteroids);
+            }
             if (Keyboard.IsKeyDown(Key.X))
             {
                 Console.WriteLine("entered console");
