@@ -22,7 +22,7 @@ namespace asterTake2
                 shape
                     .Rotate(AngleRadians, RotationCenter)
                     .Offset(Position)
-                    .Draw(graphics);
+                    .Draw(graphics, Pens.BlueViolet);
             }
         }
     }

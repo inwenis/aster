@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Windows;
 
@@ -8,6 +9,8 @@ namespace asterTake2
     public class Line : ComplexShape
     {
         static readonly Random Random = new Random();
+        private DateTimeOffset _createdDateTime;
+        private int _timeToLive = 5;
 
         public Line(Vector a, Vector b)
         {
@@ -15,6 +18,28 @@ namespace asterTake2
             {
                 new Shape(a, b)
             };
+            _createdDateTime = DateTimeOffset.UtcNow;
+        }
+
+        public override void Draw(Graphics graphics)
+        {
+            var start = 0;
+            var end = 255;
+            var timePassedTotalSeconds = (DateTimeOffset.UtcNow - _createdDateTime).TotalSeconds;
+            if (timePassedTotalSeconds > _timeToLive)
+                return;
+            var alpha = end - (timePassedTotalSeconds / _timeToLive * end);
+            Console.WriteLine(alpha);
+            var pen = new Pen(Color.FromArgb((int)alpha, Color.BlueViolet));
+            //wtf -> pen is idosposable?
+            foreach (var shape in Shapes)
+            {
+                shape
+                    .Rotate(AngleRadians, RotationCenter)
+                    .Offset(Position)
+                    //set dynamic alpha color
+                    .Draw(graphics, pen);
+            }
         }
 
         public static List<Line> GetLinesOfShapeFloatingInRandomDirections(ComplexShape complexShape)
