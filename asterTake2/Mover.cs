@@ -8,6 +8,7 @@ namespace asterTake2
     {
         private readonly int _mapWidth;
         private readonly int _mapHeight;
+        private double _shipRotationSpeed = Math.PI / 90 * 2;
 
         public Mover(int mapWidth, int mapHeight)
         {
@@ -45,11 +46,11 @@ namespace asterTake2
             }
             if (Keyboard.IsKeyDown(Key.Right))
             {
-                ship.AngleRadians += Math.PI / 90;
+                ship.AngleRadians += _shipRotationSpeed;
             }
             if (Keyboard.IsKeyDown(Key.Left))
             {
-                ship.AngleRadians += -Math.PI / 90;
+                ship.AngleRadians -= _shipRotationSpeed;
             }
 
             ship.Position = ship.Position + ship.Velocity;
