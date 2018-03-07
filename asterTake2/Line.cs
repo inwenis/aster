@@ -77,5 +77,11 @@ namespace asterTake2
             }
             return lines;
         }
+
+        public bool IsVisible()
+        {
+            var secondsAlive = (DateTimeOffset.UtcNow - _createdTimestamp).TotalSeconds;
+            return secondsAlive < _secondsToLive;
+        }
     }
 }
