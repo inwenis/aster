@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Windows;
 
@@ -8,6 +9,9 @@ namespace asterTake2
     public class Line : ComplexShape
     {
         static readonly Random Random = new Random();
+        private DateTimeOffset _createdTimestamp;
+        private int _secondsToLive = 5;
+        private int _maxAlpha = 255;
 
         public Line(Vector a, Vector b)
         {
@@ -15,6 +19,27 @@ namespace asterTake2
             {
                 new Shape(a, b)
             };
+            _createdTimestamp = DateTimeOffset.UtcNow;
+        }
+
+        public override void Draw(Graphics graphics)
+        {
+            var secondsAlive = (DateTimeOffset.UtcNow - _createdTimestamp).TotalSeconds;
+            if (secondsAlive > _secondsToLive)
+            {
+                return;
+            }
+            var alpha = _maxAlpha * (1 - secondsAlive / _secondsToLive);
+            using (var pen = new Pen(Color.FromArgb((int) alpha, Color.BlueViolet)))
+            {
+                foreach (var shape in Shapes)
+                {
+                    shape
+                        .Rotate(AngleRadians, RotationCenter)
+                        .Offset(Position)
+                        .Draw(graphics, pen);
+                }
+            }
         }
 
         public static List<Line> GetLinesOfShapeFloatingInRandomDirections(ComplexShape complexShape)
@@ -51,6 +76,12 @@ namespace asterTake2
                 }
             }
             return lines;
+        }
+
+        public bool IsVisible()
+        {
+            var secondsAlive = (DateTimeOffset.UtcNow - _createdTimestamp).TotalSeconds;
+            return secondsAlive < _secondsToLive;
         }
     }
 }

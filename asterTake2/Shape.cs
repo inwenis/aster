@@ -49,9 +49,9 @@ namespace asterTake2
             };
         }
 
-        public void Draw(Graphics graphics)
+        public void Draw(Graphics graphics, Pen pen)
         {
-            graphics.DrawPolygon(Pens.BlueViolet, Points);
+            graphics.DrawPolygon(pen, Points);
         }
     }
 }

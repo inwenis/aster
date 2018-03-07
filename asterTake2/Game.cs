@@ -206,7 +206,10 @@ namespace asterTake2
             //TODO don't have to do this every frame
             Bullets = Bullets.Where(b => b.Alive).ToList();
             Asteroids = Asteroids.Where(a => a.Alive).ToList();
-            _lines = _lines.Where(IsInsideWindow).ToList();
+            _lines = _lines
+                .Where(IsInsideWindow)
+                .Where(line => line.IsVisible())
+                .ToList();
 
             //Move methods are a lie -> they set IsAlive too
             foreach (var bullet in Bullets)
