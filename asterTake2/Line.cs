@@ -9,8 +9,9 @@ namespace asterTake2
     public class Line : ComplexShape
     {
         static readonly Random Random = new Random();
-        private DateTimeOffset _createdDateTime;
-        private int _timeToLive = 5;
+        private DateTimeOffset _createdTimestamp;
+        private int _secondsToLive = 5;
+        private int _maxAlpha = 255;
 
         public Line(Vector a, Vector b)
         {
@@ -18,27 +19,26 @@ namespace asterTake2
             {
                 new Shape(a, b)
             };
-            _createdDateTime = DateTimeOffset.UtcNow;
+            _createdTimestamp = DateTimeOffset.UtcNow;
         }
 
         public override void Draw(Graphics graphics)
         {
-            var start = 0;
-            var end = 255;
-            var timePassedTotalSeconds = (DateTimeOffset.UtcNow - _createdDateTime).TotalSeconds;
-            if (timePassedTotalSeconds > _timeToLive)
-                return;
-            var alpha = end - (timePassedTotalSeconds / _timeToLive * end);
-            Console.WriteLine(alpha);
-            var pen = new Pen(Color.FromArgb((int)alpha, Color.BlueViolet));
-            //wtf -> pen is idosposable?
-            foreach (var shape in Shapes)
+            var secondsAlive = (DateTimeOffset.UtcNow - _createdTimestamp).TotalSeconds;
+            if (secondsAlive > _secondsToLive)
             {
-                shape
-                    .Rotate(AngleRadians, RotationCenter)
-                    .Offset(Position)
-                    //set dynamic alpha color
-                    .Draw(graphics, pen);
+                return;
+            }
+            var alpha = _maxAlpha * (1 - secondsAlive / _secondsToLive);
+            using (var pen = new Pen(Color.FromArgb((int) alpha, Color.BlueViolet)))
+            {
+                foreach (var shape in Shapes)
+                {
+                    shape
+                        .Rotate(AngleRadians, RotationCenter)
+                        .Offset(Position)
+                        .Draw(graphics, pen);
+                }
             }
         }
 
