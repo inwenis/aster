@@ -4,5 +4,6 @@
     {
         void DoJob(string input);
         bool CanHandle(string input);
+        string GetHelp();
     }
 }

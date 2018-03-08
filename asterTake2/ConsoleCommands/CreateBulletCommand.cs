@@ -45,5 +45,10 @@ namespace asterTake2.ConsoleCommands
             };
             return commandNames.Any(input.StartsWith);
         }
+
+        public string GetHelp()
+        {
+            return "bullet angle [auto] - add bullet, example: addBullet pi3/4 auto";
+        }
     }
 }

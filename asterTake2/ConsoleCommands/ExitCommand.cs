@@ -21,5 +21,10 @@ namespace asterTake2.ConsoleCommands
             var names = new[] {"exit", "quit", "x"};
             return names.Any(input.StartsWith);
         }
+
+        public string GetHelp()
+        {
+            return "exit - exit the game";
+        }
     }
 }

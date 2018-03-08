@@ -12,7 +12,7 @@ using Size = System.Drawing.Size;
 
 namespace asterTake2
 {
-    internal class Game
+    internal partial class Game
     {
         private long _actualFPS;
         private const double FPS = 60;
@@ -37,12 +37,6 @@ namespace asterTake2
 
         public Game()
         {
-            _commands = new List<IConsoleCommand>()
-            {
-                new ExitCommand(this),
-                new CreateBulletCommand(this),
-                new CreateAutoAimBulletOnKeyB(new CreateBulletCommand(this))
-            };
             _collider = new Collider();
             var mapWidth = 1000;
             var mapHeight = 600;
@@ -73,6 +67,17 @@ namespace asterTake2
             _score = new Score();
             _scoreBasedEvents = new ScoreBasedEvents();
             _timeBasedActions = new TimeBasedActions();
+
+            var helpCommand = new HelpCommand();
+            _commands = new List<IConsoleCommand>()
+            {
+                new ExitCommand(this),
+                new CreateBulletCommand(this),
+                new CreateAutoAimBulletOnKeyB(new CreateBulletCommand(this)),
+                new PrintAsteroidPositionsCommand(Asteroids),
+                helpCommand
+            };
+            helpCommand.Commands = _commands;
         }
 
         private void Paint(object sender, PaintEventArgs e)
@@ -155,6 +160,7 @@ namespace asterTake2
                 else
                 {
                     Console.WriteLine("Game is running slowly");
+                    Console.WriteLine("Press 'h' to see available commands");
                 }
             }
         }
@@ -166,12 +172,13 @@ namespace asterTake2
 
         private void GameUpdate()
         {
+            if (Keyboard.IsKeyDown(Key.H))
+            {
+                _commands.Single(x => x.CanHandle("help")).DoJob("");
+            }
             if(Keyboard.IsKeyDown(Key.D))
             {
-                foreach (var asteroid in Asteroids)
-                {
-                    Console.WriteLine(asteroid.Position);
-                }
+                _commands.Single(x => x.CanHandle("printAsteroidPositions")).DoJob("");
             }
             if (Keyboard.IsKeyDown(Key.A))
             {
