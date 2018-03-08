@@ -1,2 +1,5 @@
 Bugs:
 - lines after destroyed ship are not displayed when ship is killed
+
+TODO:
+rename project from asterTake2
