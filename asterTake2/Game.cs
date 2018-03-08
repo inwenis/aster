@@ -12,14 +12,14 @@ using Size = System.Drawing.Size;
 
 namespace asterTake2
 {
-    internal class Game
+    internal partial class Game
     {
         private long _actualFPS;
         private const double FPS = 60;
         private readonly double _interval = TimeSpan.FromSeconds(1 / FPS).Milliseconds;
         private readonly Form _window;
         private readonly Canvas _canvas;
-        private bool _isRunning;
+        public bool IsRunning;
         private readonly Stopwatch _stopwatch;
         private Vector _shipStartingPoint;
         private readonly Ship _ship;
@@ -37,12 +37,6 @@ namespace asterTake2
 
         public Game()
         {
-            _commands = new List<IConsoleCommand>()
-            {
-                new ExitCommand(this),
-                new CreateBulletCommand(this),
-                new CreateAutoAimBulletOnKeyB(new CreateBulletCommand(this))
-            };
             _collider = new Collider();
             var mapWidth = 1000;
             var mapHeight = 600;
@@ -73,6 +67,18 @@ namespace asterTake2
             _score = new Score();
             _scoreBasedEvents = new ScoreBasedEvents();
             _timeBasedActions = new TimeBasedActions();
+
+            var helpCommand = new HelpCommand();
+            _commands = new List<IConsoleCommand>()
+            {
+                new ExitConsoleCommand(this),
+                new ExitGameCommand(this),
+                new CreateBulletCommand(this),
+                new PrintAsteroidPositionsCommand(Asteroids),
+                new Add10AsteroidsCommand(Asteroids),
+                helpCommand
+            };
+            helpCommand.Commands = _commands;
         }
 
         private void Paint(object sender, PaintEventArgs e)
@@ -128,18 +134,14 @@ namespace asterTake2
         public void Start()
         {
             _stopwatch.Start();
-            _isRunning = true;
+            IsRunning = true;
             _window.Show();
             _window.Activate();
-            while (_isRunning)
+            while (IsRunning)
             {
                 var start = _stopwatch.ElapsedMilliseconds;
                 Application.DoEvents();
 
-                if (Keyboard.IsKeyDown(Key.Escape))
-                {
-                    _isRunning = false;
-                }
                 GameUpdate();
 
                 _canvas.Invalidate();
@@ -155,29 +157,24 @@ namespace asterTake2
                 else
                 {
                     Console.WriteLine("Game is running slowly");
+                    Console.WriteLine("Press 'h' to see available commands");
+                    Console.WriteLine("Press 'x' to enter console");
                 }
             }
         }
 
         private void GameWindowOnClosed(object sender, EventArgs eventArgs)
         {
-            _isRunning = false;
+            IsRunning = false;
         }
 
         private void GameUpdate()
         {
-            if(Keyboard.IsKeyDown(Key.D))
+            foreach (var consoleCommand in _commands.Where(x => Keyboard.IsKeyDown(x.ShortcutKey)))
             {
-                foreach (var asteroid in Asteroids)
-                {
-                    Console.WriteLine(asteroid.Position);
-                }
+                consoleCommand.DoJobOnShortcutKey();
             }
-            if (Keyboard.IsKeyDown(Key.A))
-            {
-                var asteroids = AsteroidAndBulletCreator.CreateAsteroids(10);
-                Asteroids.AddRange(asteroids);
-            }
+
             if (Keyboard.IsKeyDown(Key.X))
             {
                 Console.WriteLine("entered console");
@@ -205,7 +202,7 @@ namespace asterTake2
 
             //TODO don't have to do this every frame
             Bullets = Bullets.Where(b => b.Alive).ToList();
-            Asteroids = Asteroids.Where(a => a.Alive).ToList();
+            Asteroids.RemoveAll(IsDead);
             _lines = _lines
                 .Where(IsInsideWindow)
                 .Where(line => line.IsVisible())
@@ -254,11 +251,16 @@ namespace asterTake2
             {
                 _level += 1;
                 int count = (int) (5 * Math.Pow(2, _level - 1));
-                Asteroids = AsteroidAndBulletCreator.CreateAsteroids(count);
+                Asteroids.AddRange(AsteroidAndBulletCreator.CreateAsteroids(count));
             }
 
             _scoreBasedEvents.Handle(_score.Points, _ship);
             _timeBasedActions.Handle(_stopwatch.ElapsedMilliseconds);
+        }
+
+        private bool IsDead(Asteroid asteroid)
+        {
+            return asteroid.Alive == false;
         }
 
         private static bool IsInsideWindow(Line line)

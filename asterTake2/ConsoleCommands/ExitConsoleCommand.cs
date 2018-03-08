@@ -1,12 +1,15 @@
 ﻿using System.Linq;
+using System.Windows.Input;
 
 namespace asterTake2.ConsoleCommands
 {
-    internal class ExitCommand : IConsoleCommand
+    internal class ExitConsoleCommand : IConsoleCommand
     {
         private readonly Game _game;
 
-        public ExitCommand(Game game)
+        public Key ShortcutKey => Key.Q;
+
+        public ExitConsoleCommand(Game game)
         {
             _game = game;
         }
@@ -20,6 +23,16 @@ namespace asterTake2.ConsoleCommands
         {
             var names = new[] {"exit", "quit", "x"};
             return names.Any(input.StartsWith);
+        }
+
+        public string GetHelp()
+        {
+            return "exit - exit console and return to game";
+        }
+
+        public void DoJobOnShortcutKey()
+        {
+            DoJob("");
         }
     }
 }
