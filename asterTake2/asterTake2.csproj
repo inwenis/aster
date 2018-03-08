@@ -73,6 +73,7 @@
     <Compile Include="ConsoleCommands\PrintAsteroidPositionsCommand.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ConsoleCommands\RemoveLifesAndDestroyShipCommand.cs" />
     <Compile Include="Score.cs" />
     <Compile Include="ScoreBasedEvents.cs" />
     <Compile Include="Shape.cs" />

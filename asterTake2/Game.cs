@@ -22,7 +22,7 @@ namespace asterTake2
         public bool IsRunning;
         private readonly Stopwatch _stopwatch;
         private Vector _shipStartingPoint;
-        private readonly Ship _ship;
+        public readonly Ship Ship;
         public List<Asteroid> Asteroids;
         public List<Bullet> Bullets;
         private readonly Collider _collider;
@@ -59,7 +59,7 @@ namespace asterTake2
             _stopwatch = new Stopwatch();
 
             _shipStartingPoint = new Vector(500, 300);
-            _ship = new Ship(_shipStartingPoint);
+            Ship = new Ship(_shipStartingPoint);
             Asteroids = AsteroidAndBulletCreator.CreateAsteroids(5);
             Bullets = new List<Bullet>();
             _collider = new Collider();
@@ -76,6 +76,7 @@ namespace asterTake2
                 new CreateBulletCommand(this),
                 new PrintAsteroidPositionsCommand(Asteroids),
                 new Add10AsteroidsCommand(Asteroids),
+                new RemoveLifesAndDestroyShipCommand(this),
                 helpCommand
             };
             helpCommand.Commands = _commands;
@@ -88,12 +89,12 @@ namespace asterTake2
             var drawFont = new Font("Arial", 16);
             var drawBrush = new SolidBrush(Color.Aquamarine);
             string message;
-            if (_ship.Lives > 0)
+            if (Ship.Lives > 0)
             {
-                message = "Lives: " + Enumerable.Repeat(" | ", _ship.Lives).Aggregate((a,n) => a + n);
+                message = "Lives: " + Enumerable.Repeat(" | ", Ship.Lives).Aggregate((a,n) => a + n);
                 graphics.DrawString(message, drawFont, drawBrush, 10, 10);
             }
-            else if(_ship.Lives == 0)
+            else if(Ship.Lives == 0)
             {
                 message = "Lives: 0";
                 graphics.DrawString(message, drawFont, drawBrush, 10, 10);
@@ -111,12 +112,12 @@ namespace asterTake2
             graphics.DrawString("Score: " + _score.Points, drawFont, drawBrush, 10, 160);
             graphics.DrawString("Lines: " + _lines.Count, drawFont, drawBrush, 10, 190);
 
-            if (!_ship.IsAlive)
+            if (!Ship.IsAlive)
             {
                 graphics.DrawString("YOU ARE DEAD!", drawFont, drawBrush, _shipStartingPoint);
             }
 
-            _ship.Draw(graphics);
+            Ship.Draw(graphics);
             foreach (var bullet in Bullets.Where(b => b.Alive))
             {
                 bullet.Draw(graphics);
@@ -194,10 +195,10 @@ namespace asterTake2
                 }
             }
 
-            if (_ship.IsAlive && !_ship.IsWaitingToBeRespawned)
+            if (Ship.IsAlive && !Ship.IsWaitingToBeRespawned)
             {
-                _mover.Move(_ship);
-                _ship.HandleShooting(Bullets, _stopwatch.ElapsedMilliseconds, Asteroids);
+                _mover.Move(Ship);
+                Ship.HandleShooting(Bullets, _stopwatch.ElapsedMilliseconds, Asteroids);
             }
 
             //TODO don't have to do this every frame
@@ -222,9 +223,9 @@ namespace asterTake2
                 _mover.Move(line);
             }
 
-            if (!_ship.IsRespawning && !_ship.IsWaitingToBeRespawned)
+            if (!Ship.IsRespawning && !Ship.IsWaitingToBeRespawned)
             {
-                var result = _collider.FindAsteroidCollidingWithShipIfAny(Asteroids, _ship,
+                var result = _collider.FindAsteroidCollidingWithShipIfAny(Asteroids, Ship,
                     _stopwatch.ElapsedMilliseconds);
                 if (result.Collision)
                 {
@@ -254,7 +255,7 @@ namespace asterTake2
                 Asteroids.AddRange(AsteroidAndBulletCreator.CreateAsteroids(count));
             }
 
-            _scoreBasedEvents.Handle(_score.Points, _ship);
+            _scoreBasedEvents.Handle(_score.Points, Ship);
             _timeBasedActions.Handle(_stopwatch.ElapsedMilliseconds);
         }
 
@@ -274,39 +275,39 @@ namespace asterTake2
 
         private void HandleShipAsteroidCollision()
         {
-            if (_ship.Lives == 0)
+            if (Ship.Lives == 0)
             {
                 Console.WriteLine("you're dead!");
-                _ship.IsAlive = false;
-                _ship.IsVisible = false;
+                Ship.IsAlive = false;
+                Ship.IsVisible = false;
                 return;
             }
-            _ship.Lives -= 1;
-            Console.WriteLine("you got hit! Lives left " + _ship.Lives);
-            _ship.Velocity = new Vector();
-            _ship.IsWaitingToBeRespawned = true;
+            Ship.Lives -= 1;
+            Console.WriteLine("you got hit! Lives left " + Ship.Lives);
+            Ship.Velocity = new Vector();
+            Ship.IsWaitingToBeRespawned = true;
             _timeBasedActions.ScheduleAction(5000, _stopwatch.ElapsedMilliseconds, StartRespawn);
             const int blinkIntervalMiliSeconds = 150;
             for (var i = 0; 5000 + i * blinkIntervalMiliSeconds < 8000; i++)
             {
-                _timeBasedActions.ScheduleAction(5000 + i * blinkIntervalMiliSeconds, _stopwatch.ElapsedMilliseconds, () => _ship.IsVisible = !_ship.IsVisible);
+                _timeBasedActions.ScheduleAction(5000 + i * blinkIntervalMiliSeconds, _stopwatch.ElapsedMilliseconds, () => Ship.IsVisible = !Ship.IsVisible);
             }
             _timeBasedActions.ScheduleAction(8000, _stopwatch.ElapsedMilliseconds, EndRespawn);
 
-            var lines = Line.GetLinesOfShapeFloatingInRandomDirections(_ship);
+            var lines = Line.GetLinesOfShapeFloatingInRandomDirections(Ship);
             _lines.AddRange(lines);
         }
 
         private void EndRespawn()
         {
-            _ship.IsRespawning = false;
+            Ship.IsRespawning = false;
         }
 
         private void StartRespawn()
         {
-            _ship.IsRespawning = true;
-            _ship.Position = _shipStartingPoint;
-            _ship.IsWaitingToBeRespawned = false;
+            Ship.IsRespawning = true;
+            Ship.Position = _shipStartingPoint;
+            Ship.IsWaitingToBeRespawned = false;
             var asteroidsThatAreTooClose = Asteroids
                 .Where(a => (a.Position - _shipStartingPoint).Length < 300);
             foreach (var asteroid in asteroidsThatAreTooClose)
