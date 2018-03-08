@@ -170,12 +170,9 @@ namespace asterTake2
 
         private void GameUpdate()
         {
-            foreach (var consoleCommand in _commands)
+            foreach (var consoleCommand in _commands.Where(x => Keyboard.IsKeyDown(x.ShortcutKey)))
             {
-                if (Keyboard.IsKeyDown(consoleCommand.ShortcutKey))
-                {
-                    consoleCommand.DoJobOnShortcutKey();
-                }
+                consoleCommand.DoJobOnShortcutKey();
             }
 
             if (Keyboard.IsKeyDown(Key.X))
