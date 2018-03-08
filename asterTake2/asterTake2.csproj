@@ -60,9 +60,11 @@
     <Compile Include="Collider.cs" />
     <Compile Include="ConsoleCommands\CreateAutoAimBulletOnKeyB.cs" />
     <Compile Include="ConsoleCommands\CreateBulletCommand.cs" />
-    <Compile Include="ConsoleCommands\ExitCommand.cs" />
+    <Compile Include="ConsoleCommands\ExitConsoleCommand.cs" />
+    <Compile Include="ConsoleCommands\ExitGameCommand.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="ComplexShape.cs" />
+    <Compile Include="ConsoleCommands\Game.Add10AsteroidsCommand.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="ConsoleCommands\IConsoleCommand.cs" />
     <Compile Include="ConsoleCommands\HelpCommand.cs" />

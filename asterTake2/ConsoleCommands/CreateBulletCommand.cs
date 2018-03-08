@@ -2,12 +2,15 @@
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
+using System.Windows.Input;
 
 namespace asterTake2.ConsoleCommands
 {
     internal class CreateBulletCommand : IConsoleCommand
     {
         private readonly Game _game;
+
+        public Key ShortcutKey => Key.B;
 
         public CreateBulletCommand(Game game)
         {
@@ -49,6 +52,11 @@ namespace asterTake2.ConsoleCommands
         public string GetHelp()
         {
             return "bullet angle [auto] - add bullet, example: addBullet pi3/4 auto";
+        }
+
+        public void DoJobOnShortcutKey()
+        {
+            throw new NotImplementedException();
         }
     }
 }

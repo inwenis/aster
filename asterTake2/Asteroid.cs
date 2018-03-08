@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace asterTake2
 {
-    internal class Asteroid : ComplexShape
+    public class Asteroid : ComplexShape
     {
         public bool Alive;
         public int Generation;

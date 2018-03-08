@@ -19,7 +19,7 @@ namespace asterTake2
         private readonly double _interval = TimeSpan.FromSeconds(1 / FPS).Milliseconds;
         private readonly Form _window;
         private readonly Canvas _canvas;
-        private bool _isRunning;
+        public bool IsRunning;
         private readonly Stopwatch _stopwatch;
         private Vector _shipStartingPoint;
         private readonly Ship _ship;
@@ -71,7 +71,8 @@ namespace asterTake2
             var helpCommand = new HelpCommand();
             _commands = new List<IConsoleCommand>()
             {
-                new ExitCommand(this),
+                new ExitConsoleCommand(this),
+                new ExitGameCommand(this),
                 new CreateBulletCommand(this),
                 new CreateAutoAimBulletOnKeyB(new CreateBulletCommand(this)),
                 new PrintAsteroidPositionsCommand(Asteroids),
@@ -133,17 +134,17 @@ namespace asterTake2
         public void Start()
         {
             _stopwatch.Start();
-            _isRunning = true;
+            IsRunning = true;
             _window.Show();
             _window.Activate();
-            while (_isRunning)
+            while (IsRunning)
             {
                 var start = _stopwatch.ElapsedMilliseconds;
                 Application.DoEvents();
 
                 if (Keyboard.IsKeyDown(Key.Escape))
                 {
-                    _isRunning = false;
+                    IsRunning = false;
                 }
                 GameUpdate();
 
@@ -167,24 +168,19 @@ namespace asterTake2
 
         private void GameWindowOnClosed(object sender, EventArgs eventArgs)
         {
-            _isRunning = false;
+            IsRunning = false;
         }
 
         private void GameUpdate()
         {
-            if (Keyboard.IsKeyDown(Key.H))
+            foreach (var consoleCommand in _commands)
             {
-                _commands.Single(x => x.CanHandle("help")).DoJob("");
+                if (Keyboard.IsKeyDown(consoleCommand.ShortcutKey))
+                {
+                    consoleCommand.DoJobOnShortcutKey();
+                }
             }
-            if(Keyboard.IsKeyDown(Key.D))
-            {
-                _commands.Single(x => x.CanHandle("printAsteroidPositions")).DoJob("");
-            }
-            if (Keyboard.IsKeyDown(Key.A))
-            {
-                var asteroids = AsteroidAndBulletCreator.CreateAsteroids(10);
-                Asteroids.AddRange(asteroids);
-            }
+
             if (Keyboard.IsKeyDown(Key.X))
             {
                 Console.WriteLine("entered console");
