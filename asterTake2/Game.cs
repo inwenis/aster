@@ -34,6 +34,7 @@ namespace asterTake2
         private readonly List<IConsoleCommand> _commands;
         public bool ExitConsole;
         private List<Line> _lines = new List<Line>();
+        private bool _scoreWasSaved = false;
 
         public Game()
         {
@@ -225,12 +226,17 @@ namespace asterTake2
 
             if (!Ship.IsRespawning && !Ship.IsWaitingToBeRespawned)
             {
-                var result = _collider.FindAsteroidCollidingWithShipIfAny(Asteroids, Ship,
-                    _stopwatch.ElapsedMilliseconds);
+                var result = _collider.FindAsteroidCollidingWithShipIfAny(Asteroids, Ship, _stopwatch.ElapsedMilliseconds);
                 if (result.Collision)
                 {
                     HandleShipAsteroidCollision();
                 }
+            }
+            if (Ship.IsAlive == false && _scoreWasSaved == false)
+            {
+                var enterScoreWindow = new EnterScoreWindow(_score.Points);
+                enterScoreWindow.ShowDialog();
+                _scoreWasSaved = true;
             }
 
             var destroyedAsteroids = Collider.HandleAsteroidBulletCollisions(Asteroids, Bullets);

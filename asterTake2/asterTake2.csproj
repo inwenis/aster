@@ -61,6 +61,12 @@
     <Compile Include="ConsoleCommands\CreateBulletCommand.cs" />
     <Compile Include="ConsoleCommands\ExitConsoleCommand.cs" />
     <Compile Include="ConsoleCommands\ExitGameCommand.cs" />
+    <Compile Include="EnterScoreWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EnterScoreWindow.Designer.cs">
+      <DependentUpon>EnterScoreWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="ComplexShape.cs" />
     <Compile Include="ConsoleCommands\Add10AsteroidsCommand.cs" />
@@ -80,6 +86,9 @@
     <Compile Include="Ship.cs" />
     <Compile Include="AsteroidAndBulletCreator.cs" />
     <Compile Include="TimeBasedActions.cs" />
+    <EmbeddedResource Include="EnterScoreWindow.resx">
+      <DependentUpon>EnterScoreWindow.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
