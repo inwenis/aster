@@ -251,7 +251,7 @@ namespace asterTake2
             {
                 _level += 1;
                 int count = (int) (5 * Math.Pow(2, _level - 1));
-                Asteroids = AsteroidAndBulletCreator.CreateAsteroids(count);
+                Asteroids.AddRange(AsteroidAndBulletCreator.CreateAsteroids(count));
             }
 
             _scoreBasedEvents.Handle(_score.Points, _ship);
