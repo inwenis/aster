@@ -74,8 +74,8 @@ namespace asterTake2
                 new ExitConsoleCommand(this),
                 new ExitGameCommand(this),
                 new CreateBulletCommand(this),
-                new CreateAutoAimBulletOnKeyB(new CreateBulletCommand(this)),
                 new PrintAsteroidPositionsCommand(Asteroids),
+                new Add10AsteroidsCommand(Asteroids),
                 helpCommand
             };
             helpCommand.Commands = _commands;
@@ -142,10 +142,6 @@ namespace asterTake2
                 var start = _stopwatch.ElapsedMilliseconds;
                 Application.DoEvents();
 
-                if (Keyboard.IsKeyDown(Key.Escape))
-                {
-                    IsRunning = false;
-                }
                 GameUpdate();
 
                 _canvas.Invalidate();
@@ -208,7 +204,7 @@ namespace asterTake2
 
             //TODO don't have to do this every frame
             Bullets = Bullets.Where(b => b.Alive).ToList();
-            Asteroids = Asteroids.Where(a => a.Alive).ToList();
+            Asteroids.RemoveAll(IsDead);
             _lines = _lines
                 .Where(IsInsideWindow)
                 .Where(line => line.IsVisible())
@@ -262,6 +258,11 @@ namespace asterTake2
 
             _scoreBasedEvents.Handle(_score.Points, _ship);
             _timeBasedActions.Handle(_stopwatch.ElapsedMilliseconds);
+        }
+
+        private bool IsDead(Asteroid asteroid)
+        {
+            return asteroid.Alive == false;
         }
 
         private static bool IsInsideWindow(Line line)

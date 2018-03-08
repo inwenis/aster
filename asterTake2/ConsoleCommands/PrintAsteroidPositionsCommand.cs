@@ -33,7 +33,7 @@ namespace asterTake2
 
             public void DoJobOnShortcutKey()
             {
-                throw new NotImplementedException();
+                DoJob("");
             }
 
             public string GetHelp()

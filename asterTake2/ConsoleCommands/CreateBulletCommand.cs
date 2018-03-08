@@ -56,7 +56,7 @@ namespace asterTake2.ConsoleCommands
 
         public void DoJobOnShortcutKey()
         {
-            throw new NotImplementedException();
+            DoJob("addBullet pi3/4 auto");
         }
     }
 }
