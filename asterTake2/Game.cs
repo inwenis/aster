@@ -158,6 +158,7 @@ namespace asterTake2
                 {
                     Console.WriteLine("Game is running slowly");
                     Console.WriteLine("Press 'h' to see available commands");
+                    Console.WriteLine("Press 'x' to enter console");
                 }
             }
         }
