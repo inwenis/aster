@@ -5,41 +5,38 @@ using asterTake2.ConsoleCommands;
 
 namespace asterTake2
 {
-    internal partial class Game
+    public class PrintAsteroidPositionsCommand : IConsoleCommand
     {
-        public class PrintAsteroidPositionsCommand : IConsoleCommand
+        private readonly List<Asteroid> _asteroids;
+
+        public PrintAsteroidPositionsCommand(List<Asteroid> asteroids)
         {
-            private readonly List<Asteroid> _asteroids;
+            _asteroids = asteroids;
+        }
 
-            public PrintAsteroidPositionsCommand(List<Asteroid> asteroids)
+        public Key ShortcutKey => Key.D;
+
+        public bool CanHandle(string input)
+        {
+            return input == "printAsteroidPositions";
+        }
+
+        public void DoJob(string input)
+        {
+            foreach (var asteroid in _asteroids)
             {
-                _asteroids = asteroids;
+                Console.WriteLine(asteroid.Position);
             }
+        }
 
-            public Key ShortcutKey => Key.D;
+        public void DoJobOnShortcutKey()
+        {
+            DoJob("");
+        }
 
-            public bool CanHandle(string input)
-            {
-                return input == "printAsteroidPositions";
-            }
-
-            public void DoJob(string input)
-            {
-                foreach (var asteroid in _asteroids)
-                {
-                    Console.WriteLine(asteroid.Position);
-                }
-            }
-
-            public void DoJobOnShortcutKey()
-            {
-                DoJob("");
-            }
-
-            public string GetHelp()
-            {
-                return "printAsteroidPositions - print positions of asteroids";
-            }
+        public string GetHelp()
+        {
+            return "printAsteroidPositions - print positions of asteroids";
         }
     }
 }

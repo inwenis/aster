@@ -12,7 +12,7 @@ using Size = System.Drawing.Size;
 
 namespace asterTake2
 {
-    internal partial class Game
+    internal class Game
     {
         private long _actualFPS;
         private const double FPS = 60;
