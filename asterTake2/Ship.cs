@@ -61,13 +61,21 @@ namespace asterTake2
         {
             if (!IsWaitingToBeRespawned && IsVisible)
             {
-                graphics.DrawEllipse(Pens.Red, Position.X - Radius, Position.Y - Radius, 2 * Radius, 2 * Radius);
+                if (Configuraiton.ShowDebugShapes)
+                {
+                    DrawDebug(graphics);
+                }
                 base.Draw(graphics);
             }
             else if (IsWaitingToBeRespawned)
             {
                 graphics.DrawEllipse(Pens.Aqua, Position.X - Radius, Position.Y - Radius, 2 * Radius, 2 * Radius);
             }
+        }
+
+        private void DrawDebug(Graphics graphics)
+        {
+            graphics.DrawEllipse(Pens.Red, Position.X - Radius, Position.Y - Radius, 2 * Radius, 2 * Radius);
         }
 
         public void HandleShooting(List<Bullet> bullets, long currentMilisecond, List<Asteroid> asteroids)
