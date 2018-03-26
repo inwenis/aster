@@ -25,12 +25,14 @@ namespace asterTake2
             {
                 DrawDebug(graphics);
             }
-            graphics.DrawLine(Pens.BlanchedAlmond, Position, Position + Velocity * 60);
         }
 
         private void DrawDebug(Graphics graphics)
         {
+            //draw elipse used for collision
             graphics.DrawEllipse(Pens.Red, Position.X - Radius, Position.Y - Radius, Radius * 2, Radius * 2);
+            //draw velocity vector
+            graphics.DrawLine(Pens.BlanchedAlmond, Position, Position + Velocity * 60);
         }
 
         public static void Scale(Asteroid asteroid, float scale)

@@ -6,3 +6,7 @@ TODO:
     - better colisions
     - make bullets larger and their elipses smaller
     - when ship is respawned the asteroids should move away slowly
+    - inform the player that he has some new weapon
+
+ideas:
+    - autoaim bullets can be also called "magnetic bullets"
