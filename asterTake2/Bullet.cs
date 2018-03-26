@@ -36,15 +36,15 @@ namespace asterTake2
             {
                 DrawDebug(graphics);
             }
-            if (IsAutoAim)
-            {
-                graphics.DrawLine(Pens.Coral, Position, Target.Position);
-            }
         }
 
         private void DrawDebug(Graphics graphics)
         {
             graphics.DrawEllipse(Pens.Coral, Position.X - Radius, Position.Y - Radius, Radius * 2, Radius * 2);
+            if (IsAutoAim)
+            {
+                graphics.DrawLine(Pens.Coral, Position, Target.Position);
+            }
         }
     }
 }

@@ -4,3 +4,4 @@ TODO:
     - rename project from asterTake2
     - The floating direction of lines after an ansteroid/ship is destroyd should be correlated to the objects speed before it was destroyed
     - better colisions
+    - make bullets larger and their elipses smaller
