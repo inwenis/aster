@@ -58,6 +58,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Collider.cs" />
+    <Compile Include="Configuraiton.cs" />
     <Compile Include="ConsoleCommands\CreateBulletCommand.cs" />
     <Compile Include="ConsoleCommands\ExitConsoleCommand.cs" />
     <Compile Include="ConsoleCommands\ExitGameCommand.cs" />

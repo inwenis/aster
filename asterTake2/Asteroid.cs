@@ -21,8 +21,16 @@ namespace asterTake2
         public override void Draw(Graphics graphics)
         {
             base.Draw(graphics);
-            graphics.DrawEllipse(Pens.Red, Position.X - Radius, Position.Y - Radius, Radius * 2, Radius * 2);
+            if (Configuraiton.ShowDebugShapes)
+            {
+                DrawDebug(graphics);
+            }
             graphics.DrawLine(Pens.BlanchedAlmond, Position, Position + Velocity * 60);
+        }
+
+        private void DrawDebug(Graphics graphics)
+        {
+            graphics.DrawEllipse(Pens.Red, Position.X - Radius, Position.Y - Radius, Radius * 2, Radius * 2);
         }
 
         public static void Scale(Asteroid asteroid, float scale)

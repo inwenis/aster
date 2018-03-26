@@ -11,6 +11,8 @@ namespace asterTake2
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
+            Configuraiton.ShowDebugShapes = false;
+
             var game = new Game();
             game.Start();
         }
