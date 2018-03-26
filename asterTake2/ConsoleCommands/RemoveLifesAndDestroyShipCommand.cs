@@ -1,5 +1,4 @@
-﻿using System.Windows;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 using asterTake2.ConsoleCommands;
 
 namespace asterTake2
