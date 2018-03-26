@@ -32,15 +32,19 @@ namespace asterTake2
         public void Draw(Graphics graphics)
         {
             graphics.FillRectangle(Brushes.White, Position.X, Position.Y, 1, 1);
+            if (Configuraiton.ShowDebugShapes)
+            {
+                DrawDebug(graphics);
+            }
             if (IsAutoAim)
             {
                 graphics.DrawLine(Pens.Coral, Position, Target.Position);
-                graphics.DrawEllipse(Pens.Coral, Position.X - Radius, Position.Y - Radius, Radius * 2, Radius * 2);
             }
-            else
-            {
-                graphics.DrawEllipse(Pens.Red, Position.X - Radius, Position.Y - Radius, Radius * 2, Radius * 2);
-            }
+        }
+
+        private void DrawDebug(Graphics graphics)
+        {
+            graphics.DrawEllipse(Pens.Coral, Position.X - Radius, Position.Y - Radius, Radius * 2, Radius * 2);
         }
     }
 }
