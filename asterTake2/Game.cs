@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Threading;
 using System.Windows;
 using System.Windows.Forms;
@@ -234,8 +236,15 @@ namespace asterTake2
             }
             if (Ship.IsAlive == false && _scoreWasSaved == false)
             {
+                Console.WriteLine("you died");
                 var enterScoreWindow = new EnterScoreWindow(_score.Points);
                 enterScoreWindow.ShowDialog();
+                using (var httpClient = new HttpClient())
+                {
+                    var result = httpClient.GetAsync($"http://localhost:49755/Home/AddScore?score={_score.Points}").Result;
+                    Console.WriteLine(result);
+                }
+
                 _scoreWasSaved = true;
             }
 
@@ -283,7 +292,6 @@ namespace asterTake2
         {
             if (Ship.Lives == 0)
             {
-                Console.WriteLine("you're dead!");
                 Ship.IsAlive = false;
                 Ship.IsVisible = false;
                 return;
