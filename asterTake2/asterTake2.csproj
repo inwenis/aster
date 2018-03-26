@@ -62,6 +62,7 @@
     <Compile Include="ConsoleCommands\CreateBulletCommand.cs" />
     <Compile Include="ConsoleCommands\ExitConsoleCommand.cs" />
     <Compile Include="ConsoleCommands\ExitGameCommand.cs" />
+    <Compile Include="ConsoleCommands\AddScoreCommand.cs" />
     <Compile Include="EnterScoreWindow.cs">
       <SubType>Form</SubType>
     </Compile>

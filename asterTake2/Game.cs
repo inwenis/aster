@@ -28,7 +28,7 @@ namespace asterTake2
         private readonly Collider _collider;
         private int _level;
         private readonly Mover _mover;
-        private readonly Score _score;
+        public readonly Score Score;
         private readonly ScoreBasedEvents _scoreBasedEvents;
         private readonly TimeBasedActions _timeBasedActions;
         private readonly List<IConsoleCommand> _commands;
@@ -65,7 +65,7 @@ namespace asterTake2
             Bullets = new List<Bullet>();
             _collider = new Collider();
             _level = 1;
-            _score = new Score();
+            Score = new Score();
             _scoreBasedEvents = new ScoreBasedEvents();
             _timeBasedActions = new TimeBasedActions();
 
@@ -78,6 +78,7 @@ namespace asterTake2
                 new PrintAsteroidPositionsCommand(Asteroids),
                 new Add10AsteroidsCommand(Asteroids),
                 new RemoveLifesAndDestroyShipCommand(this),
+                new AddScoreCommand(this),
                 helpCommand
             };
             helpCommand.Commands = _commands;
@@ -110,7 +111,7 @@ namespace asterTake2
             graphics.DrawString("Level: " + _level, drawFont, drawBrush, 10, 70);
             graphics.DrawString("Bullets: " + Bullets.Count, drawFont, drawBrush, 10, 100);
             graphics.DrawString("FPS: " + _actualFPS, drawFont, drawBrush, 10, 130);
-            graphics.DrawString("Score: " + _score.Points, drawFont, drawBrush, 10, 160);
+            graphics.DrawString("Score: " + Score.Points, drawFont, drawBrush, 10, 160);
             graphics.DrawString("Lines: " + _lines.Count, drawFont, drawBrush, 10, 190);
 
             if (!Ship.IsAlive)
@@ -234,13 +235,13 @@ namespace asterTake2
             }
             if (Ship.IsAlive == false && _scoreWasSaved == false)
             {
-                var enterScoreWindow = new EnterScoreWindow(_score.Points);
+                var enterScoreWindow = new EnterScoreWindow(Score.Points);
                 enterScoreWindow.ShowDialog();
                 _scoreWasSaved = true;
             }
 
             var destroyedAsteroids = Collider.HandleAsteroidBulletCollisions(Asteroids, Bullets);
-            _score.Add(destroyedAsteroids);
+            Score.Add(destroyedAsteroids);
 
             foreach (var destroyedAsteroid in destroyedAsteroids)
             {
@@ -261,7 +262,7 @@ namespace asterTake2
                 Asteroids.AddRange(AsteroidAndBulletCreator.CreateAsteroids(count));
             }
 
-            _scoreBasedEvents.Handle(_score.Points, Ship);
+            _scoreBasedEvents.Handle(Score.Points, Ship);
             _timeBasedActions.Handle(_stopwatch.ElapsedMilliseconds);
         }
 
