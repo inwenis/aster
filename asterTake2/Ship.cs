@@ -59,17 +59,13 @@ namespace asterTake2
 
         public override void Draw(Graphics graphics)
         {
+            if (Configuraiton.ShowDebugShapes)
+            {
+                DrawDebug(graphics);
+            }
             if (!IsWaitingToBeRespawned && IsVisible)
             {
-                if (Configuraiton.ShowDebugShapes)
-                {
-                    DrawDebug(graphics);
-                }
                 base.Draw(graphics);
-            }
-            else if (IsWaitingToBeRespawned)
-            {
-                graphics.DrawEllipse(Pens.Aqua, Position.X - Radius, Position.Y - Radius, 2 * Radius, 2 * Radius);
             }
         }
 
