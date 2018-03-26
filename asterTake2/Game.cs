@@ -224,7 +224,7 @@ namespace asterTake2
                 _mover.Move(line);
             }
 
-            if (!Ship.IsRespawning && !Ship.IsWaitingToBeRespawned)
+            if (!Ship.IsRespawning && !Ship.IsWaitingToBeRespawned && Ship.IsAlive)
             {
                 var result = _collider.FindAsteroidCollidingWithShipIfAny(Asteroids, Ship, _stopwatch.ElapsedMilliseconds);
                 if (result.Collision)
@@ -281,6 +281,9 @@ namespace asterTake2
 
         private void HandleShipAsteroidCollision()
         {
+            var lines = Line.GetLinesOfShapeFloatingInRandomDirections(Ship);
+            _lines.AddRange(lines);
+
             if (Ship.Lives == 0)
             {
                 Console.WriteLine("you're dead!");
@@ -288,20 +291,20 @@ namespace asterTake2
                 Ship.IsVisible = false;
                 return;
             }
-            Ship.Lives -= 1;
-            Console.WriteLine("you got hit! Lives left " + Ship.Lives);
-            Ship.Velocity = new Vector();
-            Ship.IsWaitingToBeRespawned = true;
-            _timeBasedActions.ScheduleAction(5000, _stopwatch.ElapsedMilliseconds, StartRespawn);
-            const int blinkIntervalMiliSeconds = 150;
-            for (var i = 0; 5000 + i * blinkIntervalMiliSeconds < 8000; i++)
+            else
             {
-                _timeBasedActions.ScheduleAction(5000 + i * blinkIntervalMiliSeconds, _stopwatch.ElapsedMilliseconds, () => Ship.IsVisible = !Ship.IsVisible);
+                Ship.Lives -= 1;
+                Console.WriteLine("you got hit! Lives left " + Ship.Lives);
+                Ship.Velocity = new Vector();
+                Ship.IsWaitingToBeRespawned = true;
+                _timeBasedActions.ScheduleAction(5000, _stopwatch.ElapsedMilliseconds, StartRespawn);
+                const int blinkIntervalMiliSeconds = 150;
+                for (var i = 0; 5000 + i * blinkIntervalMiliSeconds < 8000; i++)
+                {
+                    _timeBasedActions.ScheduleAction(5000 + i * blinkIntervalMiliSeconds, _stopwatch.ElapsedMilliseconds, () => Ship.IsVisible = !Ship.IsVisible);
+                }
+                _timeBasedActions.ScheduleAction(8000, _stopwatch.ElapsedMilliseconds, EndRespawn);
             }
-            _timeBasedActions.ScheduleAction(8000, _stopwatch.ElapsedMilliseconds, EndRespawn);
-
-            var lines = Line.GetLinesOfShapeFloatingInRandomDirections(Ship);
-            _lines.AddRange(lines);
         }
 
         private void EndRespawn()
