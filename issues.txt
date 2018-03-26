@@ -8,6 +8,7 @@ TODO:
     - when ship is respawned the asteroids should move away slowly
     - inform the player that he has some new weapon
     - make ships shape better
+    - add random asteroid generator
 
 ideas:
     - autoaim bullets can be also called "magnetic bullets"
