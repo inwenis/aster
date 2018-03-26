@@ -5,3 +5,4 @@ TODO:
     - The floating direction of lines after an ansteroid/ship is destroyd should be correlated to the objects speed before it was destroyed
     - better colisions
     - make bullets larger and their elipses smaller
+    - when ship is respawned the asteroids should move away slowly
