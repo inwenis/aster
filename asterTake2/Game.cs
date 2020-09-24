@@ -7,7 +7,6 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
-using asterTake2.ConsoleCommands;
 using Size = System.Drawing.Size;
 
 namespace asterTake2
@@ -31,18 +30,12 @@ namespace asterTake2
         private readonly Score _score;
         private readonly ScoreBasedEvents _scoreBasedEvents;
         private readonly TimeBasedActions _timeBasedActions;
-        private readonly List<IConsoleCommand> _commands;
         public bool ExitConsole;
-        private List<Line> _lines = new List<Line>();
+        public List<Line> Lines = new List<Line>();
+        private readonly DebugKeysHandler _extraDebugKeysHandler;
 
         public Game()
         {
-            _commands = new List<IConsoleCommand>()
-            {
-                new ExitCommand(this),
-                new CreateBulletCommand(this),
-                new CreateAutoAimBulletOnKeyB(new CreateBulletCommand(this))
-            };
             _collider = new Collider();
             var mapWidth = 1000;
             var mapHeight = 600;
@@ -73,6 +66,7 @@ namespace asterTake2
             _score = new Score();
             _scoreBasedEvents = new ScoreBasedEvents();
             _timeBasedActions = new TimeBasedActions();
+            _extraDebugKeysHandler = new DebugKeysHandler(this);
         }
 
         private void Paint(object sender, PaintEventArgs e)
@@ -103,7 +97,7 @@ namespace asterTake2
             graphics.DrawString("Bullets: " + Bullets.Count, drawFont, drawBrush, 10, 100);
             graphics.DrawString("FPS: " + _actualFPS, drawFont, drawBrush, 10, 130);
             graphics.DrawString("Score: " + _score.Points, drawFont, drawBrush, 10, 160);
-            graphics.DrawString("Lines: " + _lines.Count, drawFont, drawBrush, 10, 190);
+            graphics.DrawString("Lines: " + Lines.Count, drawFont, drawBrush, 10, 190);
 
             if (!_ship.IsAlive)
             {
@@ -119,7 +113,7 @@ namespace asterTake2
             {
                 asteroid.Draw(graphics);
             }
-            foreach (var line in _lines)
+            foreach (var line in Lines)
             {
                 line.Draw(graphics);
             }
@@ -166,50 +160,7 @@ namespace asterTake2
 
         private void GameUpdate()
         {
-            if(Keyboard.IsKeyDown(Key.D))
-            {
-                foreach (var asteroid in Asteroids)
-                {
-                    Console.WriteLine(asteroid.Position);
-                }
-            }
-            if (Keyboard.IsKeyDown(Key.A))
-            {
-                var asteroids = AsteroidAndBulletCreator.CreateAsteroids(10);
-                Asteroids.AddRange(asteroids);
-            }
-            if (Keyboard.IsKeyDown(Key.B))
-            {
-                var asteroid = AsteroidAndBulletCreator.CreateAsteroid(3);
-                Asteroids.Add(asteroid);
-            }
-            if (Keyboard.IsKeyDown(Key.C))
-            {
-                foreach (var asteroid in Asteroids)
-                {
-                    asteroid.MarkDead();
-                    var lines = Line.GetLinesOfShapeFloatingInRandomDirections(asteroid);
-                    _lines.AddRange(lines);
-                }
-            }
-            if (Keyboard.IsKeyDown(Key.X))
-            {
-                Console.WriteLine("entered console");
-                ExitConsole = false;
-                while (!ExitConsole)
-                {
-                    var textEnteredByUser = Console.ReadLine();
-                    var command = _commands.SingleOrDefault(c => c.CanHandle(textEnteredByUser));
-                    if (command != default(IConsoleCommand))
-                    {
-                        command.DoJob(textEnteredByUser);
-                    }
-                    else
-                    {
-                        Console.WriteLine("unknown command");
-                    }
-                }
-            }
+            _extraDebugKeysHandler.HandleDebugKeys();
 
             if (_ship.IsAlive && !_ship.IsWaitingToBeRespawned)
             {
@@ -220,7 +171,7 @@ namespace asterTake2
             //TODO don't have to do this every frame
             Bullets = Bullets.Where(b => b.Alive).ToList();
             Asteroids = Asteroids.Where(a => a.Alive).ToList();
-            _lines = _lines.Where(IsInsideWindow).ToList();
+            Lines = Lines.Where(IsInsideWindow).ToList();
 
             //Move methods are a lie -> they set IsAlive too
             foreach (var bullet in Bullets)
@@ -231,7 +182,7 @@ namespace asterTake2
             {
                 _mover.Move(asteroid);
             }
-            foreach (var line in _lines)
+            foreach (var line in Lines)
             {
                 _mover.Move(line);
             }
@@ -252,7 +203,7 @@ namespace asterTake2
             foreach (var destroyedAsteroid in destroyedAsteroids)
             {
                 var lines = Line.GetLinesOfShapeFloatingInRandomDirections(destroyedAsteroid);
-                _lines.AddRange(lines); //TODO clean _lines list
+                Lines.AddRange(lines); //TODO clean Lines list
             }
 
             foreach (var destroyedAsteroid in Asteroids.Where(a => !a.Alive && a.Generation != 0).ToArray())
@@ -307,7 +258,7 @@ namespace asterTake2
             _timeBasedActions.ScheduleAction(8000, _stopwatch.ElapsedMilliseconds, EndRespawn);
 
             var lines = Line.GetLinesOfShapeFloatingInRandomDirections(_ship);
-            _lines.AddRange(lines);
+            Lines.AddRange(lines);
         }
 
         private void EndRespawn()
